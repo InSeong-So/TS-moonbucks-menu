@@ -31,8 +31,12 @@ const createMenu = () => {
     menuIndex: menuTotalCount,
   });
   menuTotalCount++;
-  menuCounter.innerText = `총 ${menuTotalCount}개`;
+  setTotalCountText();
   menuInput.value = '';
+};
+
+const setTotalCountText = () => {
+  menuCounter.innerText = `총 ${menuTotalCount}개`;
 };
 
 const createMenuListElement = (menu: {
@@ -44,29 +48,34 @@ const createMenuListElement = (menu: {
   const menuId = `espresso-menu-id-${menuIndex}`;
   li.className = $const.className.li;
   li.id = menuId;
-  menuList.appendChild(li);
   const menuName = createElement('span');
   menuName.className = $const.className.span;
   menuName.textContent = newMenuName;
-  li.appendChild(menuName);
   const editBtn = createElement('button');
   editBtn.className = $const.className.editBtn;
   editBtn.textContent = '수정';
-  li.appendChild(editBtn);
   editBtn.addEventListener('click', () => editMenu(menuId));
   const removeBtn = createElement('button');
   removeBtn.className = $const.className.removeBtn;
   removeBtn.textContent = '삭제';
-  li.appendChild(removeBtn);
   removeBtn.addEventListener('click', () => removeMenu(menuId));
+  menuList.appendChild(li);
+  li.append(menuName, editBtn, removeBtn);
 };
 
 /* 메뉴 수정 */
 const editMenu = (menuId: string) => {
-  console.log('수정', menuId);
+  const newMenuName = window.prompt('수정할 메뉴명을 입력하세요.');
+  if (!newMenuName) return;
+  const menuNameElement = <HTMLSpanElement>$(menuId).firstChild;
+  menuNameElement.innerText = newMenuName;
 };
 
 /* 메뉴 삭제 */
 const removeMenu = (menuId: string) => {
-  console.log('삭제', menuId);
+  const confirmed = window.confirm('메뉴를 삭제하시겠습니까?');
+  if (!confirmed) return;
+  $(menuId).remove();
+  menuTotalCount--;
+  setTotalCountText();
 };
