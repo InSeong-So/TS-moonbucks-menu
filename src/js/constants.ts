@@ -1,7 +1,7 @@
 export const EVENTS = {
   click: 'click',
   submit: 'submit',
-};
+} as const;
 
 export const SELECTORS = {
   CLASS: {
@@ -14,13 +14,14 @@ export const SELECTORS = {
     ESPRESSO_MENU_FORM: '#espresso-menu-form',
     ESPRESSO_MENU_LIST: '#espresso-menu-list',
   },
-};
+} as const;
+
 export const MESSAGES = {
   CONFIRM_REMOVE: '정말 삭제하시겠습니까?',
   PROMPT_EDIT_MENU: '메뉴명을 수정하세요.',
-};
+} as const;
 export const FETCH_RESULT = {
   OK: 'ok',
   SERVER_ERROR: 'server_error',
   CLIENT_ERROR: 'client_error',
-};
+} as const;
