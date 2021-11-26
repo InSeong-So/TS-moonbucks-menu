@@ -7,33 +7,17 @@ const createElement = (elementName: string) => {
   return document.createElement(elementName);
 };
 
+const menuForm = $('espresso-menu-form');
 const menuInput = <HTMLInputElement>$('espresso-menu-name');
-const menuCreationBtn = $('espresso-menu-submit-button');
 const menuList = $('espresso-menu-list');
 const menuCounter = $('menu-count');
 
 let menuTotalCount = 0;
 
-menuInput.addEventListener('keydown', (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    menuInput.value && createMenu();
-  }
-});
-menuCreationBtn.addEventListener('click', () => {
+menuForm.addEventListener('submit', (e: Event) => {
+  e.preventDefault();
   menuInput.value && createMenu();
 });
-
-/* 메뉴 추가 */
-const createMenu = () => {
-  createMenuListElement({
-    newMenuName: menuInput.value,
-    menuIndex: menuTotalCount,
-  });
-  menuTotalCount++;
-  setTotalCountText();
-  menuInput.value = '';
-};
 
 const setTotalCountText = () => {
   menuCounter.innerText = `총 ${menuTotalCount}개`;
@@ -61,6 +45,17 @@ const createMenuListElement = (menu: {
   removeBtn.addEventListener('click', () => removeMenu(menuId));
   menuList.appendChild(li);
   li.append(menuName, editBtn, removeBtn);
+};
+
+/* 메뉴 추가 */
+const createMenu = () => {
+  createMenuListElement({
+    newMenuName: menuInput.value,
+    menuIndex: menuTotalCount,
+  });
+  menuTotalCount++;
+  setTotalCountText();
+  menuInput.value = '';
 };
 
 /* 메뉴 수정 */
