@@ -20,7 +20,7 @@ menuForm.addEventListener('submit', (e: Event) => {
 });
 
 const setTotalCountText = () => {
-  menuCounter.innerText = `총 ${menuTotalCount}개`;
+  menuCounter.textContent = `총 ${menuTotalCount}개`;
 };
 
 const createMenuListElement = (menu: {
@@ -63,7 +63,7 @@ const editMenu = (menuId: string) => {
   const newMenuName = window.prompt('수정할 메뉴명을 입력하세요.');
   if (!newMenuName) return;
   const menuNameElement = <HTMLSpanElement>$(menuId).firstChild;
-  menuNameElement.innerText = newMenuName;
+  menuNameElement.textContent = newMenuName;
 };
 
 /* 메뉴 삭제 */
