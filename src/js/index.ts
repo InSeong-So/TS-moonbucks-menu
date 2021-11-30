@@ -1,86 +1,80 @@
+import { $, addElement, getElCreationOptions } from '../util/domController.js';
 import constants from '../util/constants.js';
-
-const $ = (selector: string) => {
-  return <HTMLElement>document.querySelector(selector);
-};
+import { getUniqueNumber } from '../util/common.js';
 
 const menuForm = $('#espresso-menu-form');
 const menuInput = <HTMLInputElement>$('#espresso-menu-name');
-const menuList = $('#espresso-menu-list');
-const menuCounter = $('#menu-count');
-
-const { LI_STYLE, SPAN_STYLE, EDIT_BTN_STYLE, REMOVE_BTN_STYLE } =
-  constants.CLASS_NAME;
 
 menuForm.addEventListener('submit', (e: Event) => {
   e.preventDefault();
   if (!menuInput.value) return;
-  createMenuList(menuInput.value);
+  const uuid = getUniqueNumber();
+  createMenuList(menuInput.value, uuid);
+  addEventOnBtn();
   setTotalCountText();
   menuInput.value = '';
 });
 
 /* 메뉴 생성 */
-const createMenuList = (newMenuName: string) => {
-  const $li = createMenuListItems();
+const createMenuList = (newMenuName: string, uuid: number) => {
+  const $li = createMenuListItems(uuid);
   const $menuName = createMenuName(newMenuName);
   const $editBtn = createEditBtn();
   const $removeBtn = createRemoveBtn();
 
-  menuList.appendChild($li);
+  $('#espresso-menu-list').appendChild($li);
   $li.append($menuName, $editBtn, $removeBtn);
-
-  // TODO: menuId 가져오기
-  $editBtn.addEventListener('click', () => editMenu(menuId));
-  $removeBtn.addEventListener('click', () => removeMenu(menuId));
 };
 
-const addElement = (
-  elName: string,
-  attribute?: { id?: string; className?: string },
-  text?: string,
-) => {
-  const { id, className } = attribute || {};
-  const $el = document.createElement(elName);
-  $el.id = id || '';
-  $el.className = className || '';
-  $el.textContent = text || '';
-  return $el;
-};
-
-const createMenuListItems = () => {
-  return addElement('li', {
-    id: `espresso-menu-id-${1}`,
-    className: LI_STYLE,
-  });
+const createMenuListItems = (uuid: number) => {
+  const { ID } = constants.EL.MENU_LIST;
+  const newConstants = { ...constants.EL.MENU_LIST, ID: `${ID}-${uuid}` };
+  const options = getElCreationOptions(newConstants);
+  return addElement(options);
 };
 const createMenuName = (newMenuName: string) => {
-  return addElement('span', { className: SPAN_STYLE }, newMenuName);
+  const newConstants = { ...constants.EL.MENU_NAME, TEXT: newMenuName };
+  const options = getElCreationOptions(newConstants);
+  return addElement(options);
 };
 const createEditBtn = () => {
-  return addElement('button', { className: EDIT_BTN_STYLE }, '수정');
+  const options = getElCreationOptions(constants.EL.EDIT_BTN);
+  return addElement(options);
 };
 const createRemoveBtn = () => {
-  return addElement('button', { className: REMOVE_BTN_STYLE }, '삭제');
+  const options = getElCreationOptions(constants.EL.REMOVE_BTN);
+  return addElement(options);
 };
 
 /* 메뉴 수정 */
 const editMenu = (menuId: number) => {
   const newMenuName = window.prompt('수정할 메뉴명을 입력하세요.');
   if (!newMenuName) return;
-  const menuNameElement = <HTMLSpanElement>(
-    $(`#espresso-menu-id-${menuId}`).firstChild
-  );
+  const menuNameElement = <HTMLSpanElement>$(`#${menuId}`).firstChild;
   menuNameElement.textContent = newMenuName;
 };
 
 /* 메뉴 삭제 */
 const removeMenu = (menuId: number) => {
   if (!window.confirm('메뉴를 삭제하시겠습니까?')) return;
-  $(`#espresso-menu-id-${menuId}`).remove();
+  $(`#${menuId}`).remove();
   setTotalCountText();
 };
 
+const addEventOnBtn = () => {
+  $('#espresso-edit-button').addEventListener('click', (e: Event) => {
+    editMenu(e.target.parentNode.id);
+  });
+  $('#espresso-remove-button').addEventListener('click', (e: Event) => {
+    removeMenu(e.target.parentNode.id);
+  });
+};
+
+const getMenuTotalCount = () => {
+  return $('#espresso-menu-list').childNodes.length;
+};
+
 const setTotalCountText = () => {
-  menuCounter.textContent = `총 ${menuList.childNodes.length}개`;
+  const totalCount = getMenuTotalCount();
+  $('#menu-count').textContent = `총 ${totalCount}개`;
 };
