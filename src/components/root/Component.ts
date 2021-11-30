@@ -1,6 +1,6 @@
 import { $ } from '../../utils/index.js';
 import { Components, ComponentProps } from '../../../types/components';
-import changeToDiff from './index.js';
+import diffRender from './diffRender.js';
 
 export default abstract class Component implements Components {
   protected $element: HTMLElement;
@@ -22,7 +22,7 @@ export default abstract class Component implements Components {
   }
 
   render() {
-    changeToDiff(this.$element, this.template());
+    diffRender(this.$element, this.template());
     this.mount();
   }
 
