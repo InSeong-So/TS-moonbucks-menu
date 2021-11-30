@@ -57,7 +57,7 @@ const createRemoveBtn = () => {
 /* 메뉴 수정 */
 const editMenu = (menuId: string) => {
   const newMenuName = window.prompt('수정할 메뉴명을 입력하세요.');
-  if (!newMenuName) return;
+  if (!newMenuName || !newMenuName.trim()) return;
   const menuNameElement = <HTMLSpanElement>$(`#${menuId}`).firstChild;
   menuNameElement.textContent = newMenuName;
 };
