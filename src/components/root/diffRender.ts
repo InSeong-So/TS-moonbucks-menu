@@ -1,11 +1,10 @@
 import {
   getMaxLength,
-  isNotEquals,
   isOnlyExistLeft,
   isOnlyExistRight,
 } from '../../utils/index.js';
 
-export default ($targetElement: HTMLElement, template: string) => {
+const diffRender = ($targetElement: HTMLElement, template: string) => {
   const realDom = $targetElement;
   const virtualDom = realDom.cloneNode(true) as HTMLElement;
   virtualDom.innerHTML = template;
@@ -24,9 +23,7 @@ const getThisDomChilds = (target: HTMLElement): [HTMLElement[], number] => {
 };
 
 const isChangedNode = (node1: HTMLElement, node2: HTMLElement) => {
-  if (isNotEquals<NamedNodeMap>(node1.attributes, node2.attributes))
-    return true;
-  if (isDifferenceAttrtibue(node1, node2)) return true;
+  if (isDifferenceAttributes(node1, node2)) return true;
   if (isNotEqualsLastContent(node1, node2)) return true;
 
   return false;
@@ -39,13 +36,10 @@ const isNotEqualsLastContent = (node1: HTMLElement, node2: HTMLElement) => {
   return false;
 };
 
-const isDifferenceAttrtibue = (node1: HTMLElement, node2: HTMLElement) => {
-  return Array.from(node1.attributes).find(attribute => {
-    const { name } = attribute;
-    const real = node1.getAttribute(name);
-    const virtual = node2.getAttribute(name);
-    return real !== virtual;
-  });
+const isDifferenceAttributes = (real: HTMLElement, virtual: HTMLElement) => {
+  return !!Array.from(real.attributes).find(
+    ({ name }) => real.getAttribute(name) !== virtual.getAttribute(name),
+  );
 };
 
 const renderDom = (
@@ -75,3 +69,5 @@ const renderDom = (
     renderDom(realNode, realChilds[i], virtualChilds[i]);
   }
 };
+
+export default diffRender;
