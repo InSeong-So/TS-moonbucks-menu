@@ -34,3 +34,15 @@ export const getElCreationOptions = (constants: elAttributesOptions) => {
     text: TEXT,
   };
 };
+
+export const bindEventHandlerToMenuItemBtn = (
+  $el: HTMLElement,
+  handler: (menuId: string) => void,
+) => {
+  $el.addEventListener('click', (e: Event) => {
+    e.preventDefault();
+    const targetNode = <HTMLElement>e.currentTarget;
+    const menuId = (<HTMLElement>targetNode.parentElement).id;
+    handler(menuId);
+  });
+};

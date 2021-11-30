@@ -1,4 +1,9 @@
-import { $, addElement, getElCreationOptions } from '../util/domController.js';
+import {
+  $,
+  addElement,
+  getElCreationOptions,
+  bindEventHandlerToMenuItemBtn,
+} from '../util/domController.js';
 import constants from '../util/constants.js';
 import { getUniqueNumber } from '../util/common.js';
 
@@ -9,8 +14,9 @@ menuForm.addEventListener('submit', (e: Event) => {
   e.preventDefault();
   if (!menuInput.value) return;
   const uuid = getUniqueNumber();
-  createMenuList(menuInput.value, uuid);
-  addEventOnBtn();
+  const newElements = createMenuList(menuInput.value, uuid);
+  const { $editBtn, $removeBtn } = newElements;
+  addEventOnMenuItemBtn($editBtn, $removeBtn);
   setTotalCountText();
   menuInput.value = '';
 });
@@ -24,6 +30,8 @@ const createMenuList = (newMenuName: string, uuid: number) => {
 
   $('#espresso-menu-list').appendChild($li);
   $li.append($menuName, $editBtn, $removeBtn);
+
+  return { $editBtn, $removeBtn };
 };
 
 const createMenuListItems = (uuid: number) => {
@@ -47,7 +55,7 @@ const createRemoveBtn = () => {
 };
 
 /* 메뉴 수정 */
-const editMenu = (menuId: number) => {
+const editMenu = (menuId: string) => {
   const newMenuName = window.prompt('수정할 메뉴명을 입력하세요.');
   if (!newMenuName) return;
   const menuNameElement = <HTMLSpanElement>$(`#${menuId}`).firstChild;
@@ -55,19 +63,18 @@ const editMenu = (menuId: number) => {
 };
 
 /* 메뉴 삭제 */
-const removeMenu = (menuId: number) => {
+const removeMenu = (menuId: string) => {
   if (!window.confirm('메뉴를 삭제하시겠습니까?')) return;
   $(`#${menuId}`).remove();
   setTotalCountText();
 };
 
-const addEventOnBtn = () => {
-  $('#espresso-edit-button').addEventListener('click', (e: Event) => {
-    editMenu(e.target.parentNode.id);
-  });
-  $('#espresso-remove-button').addEventListener('click', (e: Event) => {
-    removeMenu(e.target.parentNode.id);
-  });
+const addEventOnMenuItemBtn = (
+  $editBtn: HTMLElement,
+  $removeBtn: HTMLElement,
+) => {
+  bindEventHandlerToMenuItemBtn($editBtn, editMenu);
+  bindEventHandlerToMenuItemBtn($removeBtn, removeMenu);
 };
 
 const getMenuTotalCount = () => {
