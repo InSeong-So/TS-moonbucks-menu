@@ -1,20 +1,42 @@
-import { $ } from '../utils/index.js';
-import Component from './root/Component.js';
+import LocalState from '../packages/storage/LocalState.js';
+import { Component } from '../packages/dom/index.js';
+import { $, createUUID } from '../packages/common/index.js';
+import { ComponentProp } from '../types/components.js';
+
+interface MenuItemProps {
+  menuId: string;
+  name: string;
+  isSoldOut: boolean;
+}
 
 export default class MenuList extends Component {
-  items: Array<string>;
+  _id: string;
+  _items: MenuItemProps[];
 
   initialized() {
-    this.items = [];
+    const { params } = <ComponentProp>this.$props;
+    this._id = this.store.getState().menus.selected.id;
+    this._items =
+      (params.length > 0
+        ? <MenuItemProps[]>params
+        : <MenuItemProps[]>LocalState.getCategoryMenus(this._id)) || [];
   }
 
   template() {
     return `
-    ${this.items
-      .map((item, index) => {
+    ${this._items
+      .map(({ menuId, name, isSoldOut }, index) => {
         return `
         <li class="menu-list-item d-flex items-center py-2">
-          <span class="w-100 pl-2 menu-name" key=${index}>${item}</span>
+          <span
+            class="w-100 pl-2 menu-name ${isSoldOut ? 'sold-out' : ''}"
+            key=${menuId} index=${index}>${name}</span>
+          <button
+            type="button"
+            class="bg-gray-50 text-gray-500 text-sm mr-1 menu-sold-out-button"
+          >
+          ${isSoldOut ? '입고' : '품절'}
+          </button>
           <button
             type="button"
             class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
@@ -34,36 +56,65 @@ export default class MenuList extends Component {
     `;
   }
 
-  getItems() {
-    return this.items;
-  }
-
   get itemCount() {
-    return this.items.length;
+    return this._items.length;
   }
 
-  addItem(item: string, callback: (data: number) => void) {
-    this.items = [item, ...this.items];
+  insertItem(name: string, callback: (data: number) => void) {
+    const isUnique: MenuItemProps | undefined = this._items.find(
+      item => item.name === name,
+    );
+    if (isUnique) return alert('이미 등록되어 있는 메뉴입니다.');
+    if (this.isInvalidationMenu(name)) return;
+    const uuid = createUUID();
+    this._items = [...this._items, { menuId: uuid, name, isSoldOut: false }];
+    LocalState.setCategoryMenus(this._id, this._items);
     this.render();
     if (callback) callback(this.itemCount);
   }
 
-  editedItem(index: number, text: string, callback: (data: number) => void) {
-    const editedItem = prompt('메뉴 이름을 수정하시겠어요?', text) ?? text;
-    this.items[index] = editedItem;
+  modifyItem(index: number, text: string, callback: (data: number) => void) {
+    const updatedItemName = prompt('메뉴 이름을 수정하시겠어요?', text) ?? text;
+    if (this.isInvalidationMenu(updatedItemName)) return;
+    const updatedItem = { ...this._items[index], name: updatedItemName };
+    this._items[index] = updatedItem;
+    LocalState.setCategoryMenus(this._id, this._items);
     this.render();
     if (callback) callback(this.itemCount);
   }
 
-  deletedItem(index: number, callback: (data: number) => void) {
+  removeItem(index: number, callback: (data: number) => void) {
     if (!confirm('메뉴를 삭제하시겠어요?')) return;
-    this.items = this.items.filter((item, i) => i !== index);
+    this._items = this._items.filter((_, i) => i !== index);
+    LocalState.setCategoryMenus(this._id, this._items);
     this.render();
     if (callback) callback(this.itemCount);
+  }
+
+  soldOutItem(index: number, keyword: '품절' | '입고') {
+    if (!confirm(`해당 메뉴를 ${keyword} 처리 하시겠어요?`)) return;
+    const target = this._items[index];
+    const soldOutItem = {
+      ...target,
+      isSoldOut: !target.isSoldOut,
+    };
+    this._items[index] = soldOutItem;
+    LocalState.setCategoryMenus(this._id, this._items);
+    this.render();
   }
 
   setMenuCount(count: number) {
     const $menuCount = $('.menu-count');
     $menuCount.innerHTML = `총 ${count}개`;
+  }
+
+  isInvalidationMenu(value: string) {
+    if (!value) return true;
+    if (value.length <= 1) {
+      alert('메뉴 이름은 최소 2글자 이상이어야 합니다.');
+      return true;
+    }
+
+    return false;
   }
 }
