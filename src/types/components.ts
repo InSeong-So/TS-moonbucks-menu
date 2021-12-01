@@ -1,3 +1,5 @@
+import { MenuItemProps } from './global.js';
+
 export interface Components {
   initialized?(): void;
 
@@ -9,8 +11,11 @@ export interface Components {
 }
 
 export interface ComponentProp {
-  route?: string;
+  params: string | MenuItemProps[];
   pages?: string;
+  /**
+   * @TODO 이 부분을 해결해야하는데 아직 진행을 못하고 있습니다ㅜ
+   */
   components?: any[];
 }
 
