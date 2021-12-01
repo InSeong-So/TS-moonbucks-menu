@@ -1,12 +1,13 @@
 import {
   getMaxLength,
+  isNodeNotEquals,
   isOnlyExistLeft,
   isOnlyExistRight,
-} from '../../utils/index.js';
+} from '../common/index.js';
 
 const diffRender = ($targetElement: HTMLElement, template: string) => {
   const realDom = $targetElement;
-  const virtualDom = realDom.cloneNode(true) as HTMLElement;
+  const virtualDom = <HTMLElement>realDom.cloneNode(true);
   virtualDom.innerHTML = template;
 
   const [realChilds, realLength] = getThisDomChilds(realDom);
@@ -23,6 +24,7 @@ const getThisDomChilds = (target: HTMLElement): [HTMLElement[], number] => {
 };
 
 const isChangedNode = (node1: HTMLElement, node2: HTMLElement) => {
+  if (isNodeNotEquals(node1, node2)) return true;
   if (isDifferenceAttributes(node1, node2)) return true;
   if (isNotEqualsLastContent(node1, node2)) return true;
 
