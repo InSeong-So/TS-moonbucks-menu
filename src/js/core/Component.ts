@@ -6,20 +6,17 @@ type BindEvent = {
   callback: EventListenerOrEventListenerObject;
 };
 interface CoreComponent {
-  template?: () => string;
-  render: () => void;
+  template: () => string;
   mount?: () => void;
   bindEvents?: () => Array<BindEvent>;
-  setEvents: () => void;
 }
 
 export default class Component implements CoreComponent {
-  key: string;
-  store: any;
-  $component: HTMLElement;
-  $parent: HTMLElement;
+  private key: string;
+  private store: any;
+  protected $component: HTMLElement;
+  protected $parent: HTMLElement;
   props: Record<string, any>;
-  binddedEvents: Array<BindEvent>;
 
   constructor(
     key: string,
@@ -33,9 +30,10 @@ export default class Component implements CoreComponent {
     this.$parent = $parent;
     this.$component = $(`[data-component=${key}]`, this.$parent);
     this.props = props;
-    this.binddedEvents = [];
     this.store = store;
     store.subscribe(this.key, this.render.bind(this));
+    this.render();
+    this.setEvents();
   }
   template() {
     return '';
@@ -43,12 +41,8 @@ export default class Component implements CoreComponent {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   mount() {}
   render() {
-    try {
-      this.$component.innerHTML = this.template();
-      this?.mount();
-    } catch (e) {
-      console.error(e);
-    }
+    this.$component.innerHTML = this.template();
+    this?.mount();
   }
 
   bindEvents() {
@@ -56,7 +50,7 @@ export default class Component implements CoreComponent {
   }
 
   setEvents() {
-    this.bindEvents()?.forEach(({ eventType, callback }) => {
+    this.bindEvents().forEach(({ eventType, callback }) => {
       addEvent(this.$component, eventType, callback);
     });
   }

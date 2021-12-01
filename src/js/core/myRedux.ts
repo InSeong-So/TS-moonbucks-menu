@@ -1,5 +1,4 @@
-
-let currentState = undefined as any;
+let currentState: any;
 let listeners: Map<string, () => void> = new Map();
 
 type Action<TPayload> = { type: string; payload: TPayload };
