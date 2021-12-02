@@ -2,14 +2,14 @@ export const $ = (selector: string) => {
   return <HTMLElement>document.querySelector(selector);
 };
 
-type elCreationOptions = {
+type ElCreationOptions = {
   elName: string;
   id?: string;
   className?: string;
   text?: string;
 };
 
-export const addElement = (options: elCreationOptions) => {
+export const addElement = (options: ElCreationOptions) => {
   const { elName, id, className, text } = options;
   const $el = document.createElement(elName);
   $el.id = id || '';
@@ -18,14 +18,14 @@ export const addElement = (options: elCreationOptions) => {
   return $el;
 };
 
-type elAttributesOptions = {
+type ElAttributesOptions = {
   TYPE: string;
   ID: string;
   CLASS_NAME: string;
   TEXT?: string;
 };
 
-export const getElCreationOptions = (constants: elAttributesOptions) => {
+export const getElCreationOptions = (constants: ElAttributesOptions) => {
   const { TYPE, ID, CLASS_NAME, TEXT } = constants;
   return {
     elName: TYPE,
@@ -35,14 +35,10 @@ export const getElCreationOptions = (constants: elAttributesOptions) => {
   };
 };
 
-export const bindEventHandlerToMenuItemBtn = (
+export const bindEvent = (
   $el: HTMLElement,
-  handler: (menuId: string) => void,
+  eventName: string,
+  handler: () => void,
 ) => {
-  $el.addEventListener('click', (e: Event) => {
-    e.preventDefault();
-    const targetNode = <HTMLElement>e.currentTarget;
-    const menuId = (<HTMLElement>targetNode.parentElement).id;
-    handler(menuId);
-  });
+  $el.addEventListener(eventName, handler);
 };

@@ -2,9 +2,14 @@ import {
   $,
   addElement,
   getElCreationOptions,
-  bindEventHandlerToMenuItemBtn,
+  bindEvent,
 } from '../util/domController.js';
-import constants from '../util/constants.js';
+import {
+  MENU_LIST_ATTR,
+  MENU_NAME_ATTR,
+  EDIT_BTN_ATTR,
+  REMOVE_BTN_ATTR,
+} from '../util/const/elements.js';
 import { getUniqueNumber } from '../util/common.js';
 
 const menuForm = $('#espresso-menu-form');
@@ -15,8 +20,8 @@ menuForm.addEventListener('submit', (e: Event) => {
   if (!menuInput.value) return;
   const uuid = getUniqueNumber();
   const newElements = createMenuList(menuInput.value, uuid);
-  const { $editBtn, $removeBtn } = newElements;
-  addEventOnMenuItemBtn($editBtn, $removeBtn);
+  const { $li, $editBtn, $removeBtn } = newElements;
+  addEventOnMenuItemBtn($li.id, $editBtn, $removeBtn);
   setTotalCountText();
   menuInput.value = '';
 });
@@ -31,50 +36,55 @@ const createMenuList = (newMenuName: string, uuid: number) => {
   $('#espresso-menu-list').appendChild($li);
   $li.append($menuName, $editBtn, $removeBtn);
 
-  return { $editBtn, $removeBtn };
+  return { $li, $editBtn, $removeBtn };
 };
 
 const createMenuListItems = (uuid: number) => {
-  const { ID } = constants.EL.MENU_LIST;
-  const newConstants = { ...constants.EL.MENU_LIST, ID: `${ID}-${uuid}` };
+  const { ID } = MENU_LIST_ATTR;
+  const newConstants = { ...MENU_LIST_ATTR, ID: `${ID}-${uuid}` };
   const options = getElCreationOptions(newConstants);
   return addElement(options);
 };
 const createMenuName = (newMenuName: string) => {
-  const newConstants = { ...constants.EL.MENU_NAME, TEXT: newMenuName };
+  const newConstants = { ...MENU_NAME_ATTR, TEXT: newMenuName };
   const options = getElCreationOptions(newConstants);
   return addElement(options);
 };
 const createEditBtn = () => {
-  const options = getElCreationOptions(constants.EL.EDIT_BTN);
+  const options = getElCreationOptions(EDIT_BTN_ATTR);
   return addElement(options);
 };
 const createRemoveBtn = () => {
-  const options = getElCreationOptions(constants.EL.REMOVE_BTN);
+  const options = getElCreationOptions(REMOVE_BTN_ATTR);
   return addElement(options);
 };
 
 /* 메뉴 수정 */
 const editMenu = (menuId: string) => {
-  const newMenuName = window.prompt('수정할 메뉴명을 입력하세요.');
-  if (!newMenuName || !newMenuName.trim()) return;
+  const newMenuName = prompt('수정할 메뉴명을 입력하세요.')?.trim();
+  if (!newMenuName) return;
   const menuNameElement = <HTMLSpanElement>$(`#${menuId}`).firstChild;
   menuNameElement.textContent = newMenuName;
 };
 
 /* 메뉴 삭제 */
 const removeMenu = (menuId: string) => {
-  if (!window.confirm('메뉴를 삭제하시겠습니까?')) return;
+  if (!confirm('메뉴를 삭제하시겠습니까?')) return;
   $(`#${menuId}`).remove();
   setTotalCountText();
 };
 
 const addEventOnMenuItemBtn = (
+  menuId: string,
   $editBtn: HTMLElement,
   $removeBtn: HTMLElement,
 ) => {
-  bindEventHandlerToMenuItemBtn($editBtn, editMenu);
-  bindEventHandlerToMenuItemBtn($removeBtn, removeMenu);
+  bindEvent($editBtn, 'click', () => {
+    editMenu(menuId);
+  });
+  bindEvent($removeBtn, 'click', () => {
+    removeMenu(menuId);
+  });
 };
 
 const getMenuTotalCount = () => {
