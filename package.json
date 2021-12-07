@@ -1,11 +1,13 @@
 {
   "name": "moon-bucks-ts",
   "version": "1.0.0",
-  "description": "<br/> <p align=\"middle\">   <img width=\"200px;\" src=\"./src/images/moonbucks.png\"/> </p> <h2 align=\"middle\">JS 문벅스 카페메뉴 앱</h2> <p align=\"middle\">Vanilla JS로 구현 하는 상태관리가 가능한 카페메뉴 앱</p> <p align=\"middle\">   <img src=\"https://img.shields.io/badge/version-1.0.0-blue?style=flat-square\" alt=\"template version\"/>   <img src=\"https://img.shields.io/badge/language-html-red.svg?style=flat-square\"/>   <img src=\"https://img.shields.io/badge/language-css-blue.svg?style=flat-square\"/>   <img src=\"https://img.shields.io/badge/language-js-yellow.svg?style=flat-square\"/>   <a href=\"https://github.com/blackcoffee-study/js-lv1-book-manual/blob/main/LICENSE\" target=\"_blank\">     <img src=\"https://img.shields.io/github/license/blackcoffee-study/moonbucks-menu.svg?style=flat-square&label=license&color=08CE5D\"/>   </a> </p>",
+  "description": "문벅스 메뉴 TS로 만들기!",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "start": "webpack-dev-server",
+    "build": "webpack",
+    "watch": "webpack -w"
   },
   "repository": {
     "type": "git",
@@ -21,11 +23,19 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "5.3.1",
     "@typescript-eslint/parser": "5.3.1",
+    "css-loader": "^6.5.1",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "4.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.4.5",
     "prettier": "2.4.1",
     "prettier-eslint": "13.0.0",
-    "typescript": "4.4.4"
+    "ts-loader": "^9.2.6",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "typescript": "4.4.4",
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.6.0"
   }
 }

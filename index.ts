@@ -1,5 +1,7 @@
-import appRoutes from './src/App.js';
-import Router from './src/packages/routes/index.js';
+import 'assets/css/index.css';
+
+import appRoutes from './src/App';
+import Router from './src/packages/routes';
 
 const router = new Router({
   global: window,
