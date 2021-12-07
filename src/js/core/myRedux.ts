@@ -1,23 +1,22 @@
-
-let currentState = undefined as any;
+let currentState: any;
 let listeners: Map<string, () => void> = new Map();
 
-type Action<TPayload> = { type: string; payload: TPayload };
-type Reducer<TState, TPayload> = (
-  state: TState,
-  action: Action<TPayload>,
-) => TState;
-export type ReturnCreateStore<TState, TPayload> = {
+export type Action<AType = any, TPayload = any> = {
+  type: AType;
+  payload: TPayload;
+};
+type Reducer<TState, TAction> = (state: TState, action: TAction) => TState;
+export type ReturnCreateStore<TState, TAction> = {
   reset: () => void;
   getState: () => Readonly<TState>;
-  dispatch: (action: Action<TPayload>) => void;
+  dispatch: (action: TAction) => void;
   subscribe: (id: string, listener: () => void) => () => void;
 };
 
-export function createStore<TState, TPayload>(
-  reducer: Reducer<TState, TPayload>,
+export function createStore<TState, TActions>(
+  reducer: Reducer<TState, TActions>,
   initialState: TState,
-): ReturnCreateStore<TState, TPayload> {
+): ReturnCreateStore<TState, TActions> {
   currentState = initialState;
   return {
     reset: () => {
