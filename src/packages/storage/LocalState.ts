@@ -1,5 +1,6 @@
-import { MenuItemProps } from '../../types/global.js';
-import Storage from './Storage.js';
+import Storage from './Storage';
+
+import { MenuItemProps } from 'component';
 
 enum ParangStorageKey {
   ACCESS_TOKEN = 'accessToken',
@@ -42,4 +43,5 @@ class LocalState extends Storage<ParangStorageKey | string> {
     ]);
   }
 }
+
 export default new LocalState();

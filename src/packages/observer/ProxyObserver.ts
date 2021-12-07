@@ -3,15 +3,18 @@ import {
   deepCloneToJSON,
   isCorrectType,
   isEqualsObject,
-} from '../common/index.js';
+} from '@/helpers';
+import { AnyObject } from 'event';
 
-const ProxyObserver = (
+const ProxyObserver = async (
   initialState: object,
   applyDebounce: void | boolean = true,
 ) => {
-  let observers: ((data: any | void) => void)[] = [];
+  let observers: AnyObject = {};
+  //  // observers를 배열로 관리하는 경우
+  // let observers: ((data?: any) => void)[] = [];
 
-  const state = new Proxy(deepCloneToJSON(initialState), {
+  const state = new Proxy(deepCloneToJSON(await initialState), {
     set: (target, name, value) => {
       if (target[name] && isEqualsObject(target[name], value)) return true;
       target[name] = value;
@@ -21,21 +24,35 @@ const ProxyObserver = (
     },
   });
 
-  state.subscribe = (listener: (data: any | void) => void) => {
-    // 구독하면 바로 1회 실행해주기
-    listener(deepCloneToJSON(state));
-    observers.push(applyDebounce ? debounce(listener) : listener);
-
-    return () => {
-      observers = observers.filter(observer => observer !== listener);
-    };
+  state.subscribe = (callback: AnyObject) => {
+    Object.keys(callback).forEach(_key => {
+      observers[_key] = applyDebounce
+        ? debounce(callback[_key])
+        : callback[_key];
+    });
   };
 
   state.notifyAll = () => {
-    observers.forEach(observer => {
-      observer(deepCloneToJSON(state));
+    Object.keys(observers).forEach(_key => {
+      observers[_key](deepCloneToJSON(state));
     });
   };
+  //  // observers를 배열로 관리하는 경우
+  // state.subscribe = (listener: (data?: any) => void) => {
+  //   // 구독하면 바로 1회 실행해주기
+  //   listener(deepCloneToJSON(state));
+  //   observers.push(applyDebounce ? debounce(listener) : listener);
+
+  //   return () => {
+  //     observers = observers.filter(observer => observer !== listener);
+  //   };
+  // };
+
+  // state.notifyAll = () => {
+  //   observers.forEach(observer => {
+  //     observer(deepCloneToJSON(state));
+  //   });
+  // };
 
   state.clear = () => {
     observers = [];

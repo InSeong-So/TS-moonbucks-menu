@@ -1,5 +1,6 @@
-import { Reducer } from '../../../types/redux.js';
-import { createStore } from '../common/index.js';
-import rootReducer from '../reducers/index.js';
+import rootReducer from '@/redux/reducers';
+import sagaWrapper from '@/redux/sagas';
+import { createStore } from '@/redux/common';
+import { Reducer } from 'redux';
 
-export default createStore(<Reducer>rootReducer);
+export default createStore(sagaWrapper(<Reducer>rootReducer));

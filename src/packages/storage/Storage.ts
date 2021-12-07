@@ -27,6 +27,6 @@ export default abstract class Storage<T extends string> {
     this.storage.removeItem(this.getOriginKey(key));
   }
   protected clearItems(keys: T[]): void {
-    keys.forEach(key => this.clearItem(this.getOriginKey(key) as T));
+    keys.forEach(key => this.clearItem(<T>this.getOriginKey(key)));
   }
 }

@@ -1,5 +1,4 @@
-import { AnyState } from '../../../types/redux.js';
-import { Action, Reducer } from '../../../types/redux.js';
+import { AnyState, Action, Reducer } from 'redux';
 
 /**
  * 객체 내의 모든 키-값 쌍에 함수를 적용합니다.

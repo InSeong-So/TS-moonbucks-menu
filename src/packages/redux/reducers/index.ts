@@ -1,5 +1,5 @@
-import { combineReducers } from '../common/index.js';
-import menus from './menus.js';
+import { combineReducers } from '../common';
+import menus from './menus';
 
 const rootReducer = combineReducers({ menus });
 

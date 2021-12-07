@@ -1,4 +1,4 @@
-import { notationConvert } from '../common/index.js';
+import { notationConvert } from '@/helpers';
 
 type HashRouteCallback = (params: string) => void;
 
@@ -78,7 +78,6 @@ export default class Router {
   };
 
   setActive = (route: string) => {
-    // 이 내용 공유하려고 합니다!!
     const $$a = <NodeListOf<HTMLElement>>(
       document.querySelectorAll('.cafe-category-name')
     );

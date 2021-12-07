@@ -3,7 +3,7 @@ import {
   isNodeNotEquals,
   isOnlyExistLeft,
   isOnlyExistRight,
-} from '../common/index.js';
+} from '@/helpers';
 
 const diffRender = ($targetElement: HTMLElement, template: string) => {
   const realDom = $targetElement;

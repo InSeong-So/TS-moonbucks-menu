@@ -1,12 +1,12 @@
-import { Action, Reducer } from '../../../types/redux.js';
-import { deepCloneAndFreeze } from '../../common/index.js';
-import ProxyObserver from '../../observer/ProxyObserver.js';
+import { Action, Reducer } from 'redux';
+import { deepCloneAndFreeze } from '@/helpers';
+import ProxyObserver from '@/observer/ProxyObserver';
 
-const createStore = (reducer: Reducer) => {
-  const state = ProxyObserver(reducer());
+const createStore = async (reducer: Reducer) => {
+  const state = await ProxyObserver(reducer()());
 
   const dispatch = (action: Action) => {
-    const newState = reducer(state, action);
+    const newState = reducer(state)(action);
 
     for (const [key, value] of Object.entries(newState)) {
       if (state[key] === value) continue;
@@ -14,8 +14,12 @@ const createStore = (reducer: Reducer) => {
     }
   };
 
-  const subscribe = (listener: (data: any | void) => void) => {
-    state.subscribe(listener);
+  // const subscribe = (listener: (data: any | void) => void) => {
+  //   state.subscribe(listener);
+  // };
+
+  const subscribe = (callback: () => void) => {
+    state.subscribe(callback);
   };
 
   const getState = () => {
