@@ -1,13 +1,10 @@
-import Component from './packages/dom/Component.js';
-import { Header, MenuPage } from './components/index.js';
-import {
-  getCategories,
-  selectedCategory,
-} from './packages/redux/reducers/menus.js';
+import { Header, MenuPage } from './components';
+import Component from '@/dom/Component';
+import { GET_CATEGORIES_SUCCESS } from './packages/redux/reducers/menus/actions';
 
 class App extends Component {
   initialized() {
-    this.store.dispatch(getCategories());
+    this.store.dispatch({ type: GET_CATEGORIES_SUCCESS });
   }
 
   template() {
@@ -23,27 +20,29 @@ class App extends Component {
 
   mount() {
     new Header('header');
-    this.store.dispatch(selectedCategory('espresso'));
+    this.store.subscribe({
+      rerender: () => {
+        new MenuPage('main', this.$props);
+      },
+    });
   }
 }
 
-new App('#app');
-
 const appRoutes = {
   home: () => {
-    new MenuPage('main', {
+    new App('#app', {
       params: '',
       pages: 'home',
     });
   },
   menu: (params: string) => {
-    new MenuPage('main', {
+    new App('#app', {
       params,
       pages: 'menu',
     });
   },
   pageNotFound: (params: string) => {
-    new MenuPage('main', {
+    new App('#app', {
       params,
       pages: 'error',
     });

@@ -1,9 +1,8 @@
-import { Component } from '../packages/dom/index.js';
-import { $, $sibling } from '../packages/common/index.js';
-import { MenuList } from './index.js';
-import { ComponentProp } from '../types/components.js';
-import { selectedCategory } from '../packages/redux/reducers/menus.js';
-import { MenuItemProps } from '../types/global.js';
+import { MenuList } from './';
+import { Component } from '@/dom';
+import { $, $sibling } from '@/helpers';
+import { ComponentProp, MenuItemProps } from 'component';
+import { SELECTED_CATEGORY } from '../packages/redux/reducers/menus/actions';
 
 export default class MenuPage extends Component {
   _isLocationError: boolean;
@@ -12,9 +11,8 @@ export default class MenuPage extends Component {
   _menus: MenuItemProps[];
 
   initialized() {
-    const { pages, params } = <ComponentProp>this.$props;
+    const { pages } = <ComponentProp>this.$props;
 
-    this.store.dispatch(selectedCategory(<string>params));
     const { selected } = this.store.getState().menus;
     this._id = selected.id;
     this._text = selected.text;
@@ -61,7 +59,6 @@ export default class MenuPage extends Component {
 
   mount() {
     if (this._isLocationError) return;
-
     const menuList = new MenuList(`#${this._id}-menu-list`, {
       params: this._menus,
     });

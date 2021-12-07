@@ -1,8 +1,17 @@
-import { APP_TITLE } from '../constants/index.js';
-import { Component } from '../packages/dom/index.js';
-import { CategoryProps } from '../types/global.js';
+import { APP_TITLE } from '@/constants';
+import { Component } from '@/dom';
+import { CategoryProps } from 'component';
+import { SELECTED_CATEGORY } from '../packages/redux/reducers/menus/actions';
 
 export default class Header extends Component {
+  hash: string;
+
+  initialized() {
+    this.hash = location.hash.substring(2);
+    const obj = { type: SELECTED_CATEGORY, data: this.hash };
+    this.store.dispatch(obj);
+  }
+
   template() {
     const { categories }: { categories: CategoryProps[] } =
       this.store.getState().menus;

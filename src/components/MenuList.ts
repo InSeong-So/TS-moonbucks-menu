@@ -1,7 +1,7 @@
-import LocalState from '../packages/storage/LocalState.js';
-import { Component } from '../packages/dom/index.js';
-import { $, createUUID } from '../packages/common/index.js';
-import { ComponentProp } from '../types/components.js';
+import LocalState from '@/storage/LocalState';
+import { Component } from '@/dom';
+import { $, createUUID } from '@/helpers';
+import { ComponentProp } from 'component';
 
 interface MenuItemProps {
   menuId: string;
