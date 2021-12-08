@@ -24,7 +24,7 @@ declare module 'event' {
   }
 
   export interface ListenerProps {
-    scope: AnyObject;
+    scope?: AnyObject;
     callback: AnyFunction;
     args: any[];
   }

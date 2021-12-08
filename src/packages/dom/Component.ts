@@ -1,6 +1,6 @@
 import diffRender from './diffRender';
 import { $ } from '@/helpers';
-import configureStore from '@/redux/store';
+import store from '@/redux/store';
 import { EventBus } from '@/events';
 import { Components, ComponentProps } from 'component';
 import { EventBusProps } from 'event';
@@ -15,8 +15,8 @@ export default abstract class Component implements Components {
   constructor(selector: string, props: ComponentProps) {
     this.$element = <HTMLElement>$(selector);
     this.$props = props;
-    this.eventBus = new EventBus();
-    configureStore.then(resolve => {
+    this.eventBus = EventBus;
+    store.then(resolve => {
       this.store = resolve;
       this.initialized();
       this.render();

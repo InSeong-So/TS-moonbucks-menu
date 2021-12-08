@@ -1,12 +1,7 @@
 import { Header, MenuPage } from './components';
 import Component from '@/dom/Component';
-import { GET_CATEGORIES_SUCCESS } from './packages/redux/reducers/menus/actions';
 
 class App extends Component {
-  initialized() {
-    this.store.dispatch({ type: GET_CATEGORIES_SUCCESS });
-  }
-
   template() {
     return `
     <div class="d-flex justify-center mt-5 w-100">
@@ -19,7 +14,8 @@ class App extends Component {
   }
 
   mount() {
-    new Header('header');
+    new Header('header', this.$props);
+
     this.store.subscribe({
       rerender: () => {
         new MenuPage('main', this.$props);
@@ -29,24 +25,9 @@ class App extends Component {
 }
 
 const appRoutes = {
-  home: () => {
-    new App('#app', {
-      params: '',
-      pages: 'home',
-    });
-  },
-  menu: (params: string) => {
-    new App('#app', {
-      params,
-      pages: 'menu',
-    });
-  },
-  pageNotFound: (params: string) => {
-    new App('#app', {
-      params,
-      pages: 'error',
-    });
-  },
+  home: () => new App('#app', { route: '#espresso' }),
+  menu: (route: string) => new App('#app', { route }),
+  pageNotFound: (route: string) => new App('#app', { route }),
 };
 
 export default appRoutes;

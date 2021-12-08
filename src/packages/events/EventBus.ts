@@ -1,13 +1,13 @@
 import { AnyFunction, EventBusProps, Listeners } from 'event';
 
-export default class EventBus implements EventBusProps {
+class EventBus implements EventBusProps {
   listeners: Listeners;
 
   constructor() {
     this.listeners = {};
   }
 
-  add(type: string, callback: AnyFunction, scope: object, ...args: any[]) {
+  add(type: string, callback: AnyFunction, scope?: object, ...args: any[]) {
     const listener = {
       scope,
       callback,
@@ -52,7 +52,7 @@ export default class EventBus implements EventBusProps {
     );
   }
 
-  dispatch<T>(type: string, target: ThisType<T>, ...args: any[]) {
+  dispatch<T>(type: string, target?: ThisType<T>, ...args: any[]) {
     const options = [{ type, target }, ...args];
 
     if (!this.hasProperty(type)) return;
@@ -68,10 +68,12 @@ export default class EventBus implements EventBusProps {
     let result = '';
     Object.keys(this.listeners).forEach(key => {
       this.listeners[key].forEach(({ scope }) => {
-        result += `${scope.className ?? 'anonymous'} listen for ${key} \n`;
+        result += `${scope?.className ?? 'anonymous'} listen for ${key} \n`;
       });
     });
 
     return result;
   }
 }
+
+export default new EventBus();

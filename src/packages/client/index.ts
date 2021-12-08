@@ -19,7 +19,7 @@ const http = {
       from: `Load "${action.category}" menu`,
     });
   },
-  async create({ category }: { category: string }, params: any) {
+  async insert({ category }: { category: string }, params: any) {
     return await httpClient.post(
       `/api/category/${category}/menu`,
       params,

@@ -1,13 +1,18 @@
 import http from '@/client';
 import {
+  INSERT_MENU_ITEM,
   INSERT_MENU_FAILURE,
   INSERT_MENU_SUCCESS,
+  LOAD_MENU,
   LOAD_MENU_FAILURE,
   LOAD_MENU_SUCCESS,
+  MODIFY_MENU_ITEM,
   MODIFY_MENU_FAILURE,
   MODIFY_MENU_SUCCESS,
+  REMOVE_MENU_ITEM,
   REMOVE_MENU_FAILURE,
   REMOVE_MENU_SUCCESS,
+  SOLD_OUT_MENU_ITEM,
   SOLD_OUT_MENU_FAILURE,
   SOLD_OUT_MENU_SUCCESS,
 } from '../reducers/menus/actions';
@@ -16,8 +21,8 @@ import { Reducer, AnyAction } from 'redux';
 
 const sagaWrapper = (reducer: Reducer) => {
   return (state?: { categories: CategoryProps[]; selected: CategoryProps }) => {
-    return (action = { type: '' }) => {
-      return reducer(state, watchDispatch(action));
+    return async (action = { type: '' }) => {
+      return reducer(state, await watchDispatch(action));
     };
   };
 };
@@ -27,21 +32,11 @@ const sagaWrapper = (reducer: Reducer) => {
  * @TODO generator/yield 구현
  */
 const fork: { [key: string]: any } = {
-  LOAD_MENU_REQUEST: (action: AnyAction) => {
-    return watchLoadMenu(action);
-  },
-  INSERT_MENU_REQUEST: (action: AnyAction) => {
-    return watchCreateMenu(action);
-  },
-  MODIFY_MENU_REQUEST: (action: AnyAction) => {
-    return watchUpdateMenu(action);
-  },
-  REMOVE_MENU_REQUEST: (action: AnyAction) => {
-    return watchDeleteMenu(action);
-  },
-  SOLD_OUT_MENU_REQUEST: (action: AnyAction) => {
-    return watchSoldoutMenu(action);
-  },
+  [LOAD_MENU]: (action: AnyAction) => watchLoadMenu(action),
+  [INSERT_MENU_ITEM]: (action: AnyAction) => watchInsertMenu(action),
+  [MODIFY_MENU_ITEM]: (action: AnyAction) => watchUpdateMenu(action),
+  [REMOVE_MENU_ITEM]: (action: AnyAction) => watchDeleteMenu(action),
+  [SOLD_OUT_MENU_ITEM]: (action: AnyAction) => watchSoldOutMenu(action),
 };
 
 /**
@@ -81,11 +76,11 @@ const watchLoadMenu = async (action: AnyAction) => {
  *
  * @param {object} action
  */
-const watchCreateMenu = async (action: AnyAction) => {
+const watchInsertMenu = async (action: AnyAction) => {
   try {
-    const { data } = await http.create(
+    const { data } = await http.insert(
       { category: action.category },
-      { name: action.data },
+      { name: action.name },
     );
     action.type = INSERT_MENU_SUCCESS;
     action.data = data;
@@ -105,7 +100,7 @@ const watchCreateMenu = async (action: AnyAction) => {
  */
 const watchUpdateMenu = async (action: AnyAction) => {
   try {
-    const { data } = await http.update(action, { name: action.data });
+    const { data } = await http.update(action, { name: action.name });
     action.type = MODIFY_MENU_SUCCESS;
     action.data = data;
     return action;
@@ -140,7 +135,7 @@ const watchDeleteMenu = async (action: AnyAction) => {
  *
  * @param {object} action
  */
-const watchSoldoutMenu = async (action: AnyAction) => {
+const watchSoldOutMenu = async (action: AnyAction) => {
   try {
     const { data } = await http.soldOut(action, { name: action.data });
     action.type = SOLD_OUT_MENU_SUCCESS;

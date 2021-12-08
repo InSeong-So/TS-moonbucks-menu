@@ -1,27 +1,23 @@
 import { MenuList } from './';
 import { Component } from '@/dom';
 import { $, $sibling } from '@/helpers';
-import { ComponentProp, MenuItemProps } from 'component';
-import { SELECTED_CATEGORY } from '../packages/redux/reducers/menus/actions';
+import { CategoryProps, MenuItemProps } from 'component';
 
 export default class MenuPage extends Component {
-  _isLocationError: boolean;
+  _selected: CategoryProps;
   _id: string;
   _text: string;
   _menus: MenuItemProps[];
 
   initialized() {
-    const { pages } = <ComponentProp>this.$props;
-
     const { selected } = this.store.getState().menus;
+    this._selected = selected;
     this._id = selected.id;
     this._text = selected.text;
     this._menus = selected.menus;
-    this._isLocationError = pages === 'error' || !selected.id;
   }
 
   template() {
-    if (this._isLocationError) return this.errorPage;
     return `
     <div class="wrapper bg-white p-10">
       <div class="heading d-flex justify-between">
@@ -46,60 +42,43 @@ export default class MenuPage extends Component {
     `;
   }
 
-  get errorPage() {
-    const { params } = <ComponentProp>this.$props;
-    return `
-    <div>
-      <h1>404: PAGE NOT FOUND!!</h1>
-      <h2>Are you sure about the ${params}?</h2>
-      <a href="http://localhost:5500">돌아가기</a>
-    </div>
-    `;
-  }
-
   mount() {
-    if (this._isLocationError) return;
     const menuList = new MenuList(`#${this._id}-menu-list`, {
-      params: this._menus,
+      selected: this._selected,
     });
+    const $menuList = $(`#${this._id}-menu-list`);
     const $inputItem = <HTMLInputElement>$(`#${this._id}-menu-name`);
     const $menuAddButton = $(`#${this._id}-menu-submit-button`);
-    $menuAddButton.addEventListener('click', event => {
-      event.preventDefault();
-      if (!$inputItem.value) return;
-      menuList.insertItem($inputItem.value, menuList.setMenuCount);
-      $inputItem.value = '';
-    });
-    $(`#${this._id}-menu-list`).addEventListener(
-      'click',
-      (event: MouseEvent) => {
-        const $target = <HTMLButtonElement>event.target;
-        event.preventDefault();
-        if (!$target.matches('button')) return;
-        const $span = <HTMLSpanElement>$sibling($target, 'li', 'span');
-        const targetItemIndex = <string>$span.getAttribute('index');
 
-        if ($target.matches('.menu-edit-button')) {
-          const targetItemText = <string>$span.textContent;
-          menuList.modifyItem(
-            +targetItemIndex,
-            targetItemText,
-            menuList.setMenuCount,
-          );
-        } else if ($target.matches('.menu-sold-out-button')) {
-          const targetItemText = <'품절' | '입고'>$target.textContent?.trim();
-          menuList.soldOutItem(+targetItemIndex, targetItemText);
-        } else if ($target.matches('.menu-remove-button')) {
-          menuList.removeItem(+targetItemIndex, menuList.setMenuCount);
-        }
-      },
-    );
-    $inputItem.addEventListener('keypress', event => {
-      if (event.key !== 'Enter') return;
-      if (!$inputItem.value) return;
+    const menuAddButtonClickHandler = (event: MouseEvent) => {
       event.preventDefault();
-      menuList.insertItem($inputItem.value, menuList.setMenuCount);
+      if (!$inputItem.value) return;
+      menuList.insertItem($inputItem.value);
       $inputItem.value = '';
-    });
+    };
+
+    const menuListClickHandler = (event: MouseEvent) => {
+      const $target = <HTMLButtonElement>event.target;
+      if (!$target.matches('button')) return;
+
+      const $span = <HTMLSpanElement>$sibling($target, 'li', 'span');
+      const targetItemIndex = Number(<string>$span.getAttribute('index'));
+
+      if ($target.matches('.menu-edit-button'))
+        menuList.modifyItem(targetItemIndex, <string>$span.textContent);
+
+      if ($target.matches('.menu-sold-out-button')) {
+        menuList.soldOutItem(
+          targetItemIndex,
+          <'품절' | '입고'>$target.textContent?.trim(),
+        );
+      }
+
+      if ($target.matches('.menu-remove-button'))
+        menuList.removeItem(targetItemIndex);
+    };
+
+    $menuAddButton.addEventListener('click', menuAddButtonClickHandler);
+    $menuList.addEventListener('click', menuListClickHandler);
   }
 }
