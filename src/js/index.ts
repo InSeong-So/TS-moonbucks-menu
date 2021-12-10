@@ -1,16 +1,11 @@
-import {
-  $,
-  addElement,
-  getElCreationOptions,
-  bindEvent,
-} from '../util/domController.js';
+import { $, addElement, bindEvent } from '../utils/domController.js';
 import {
   MENU_LIST_ATTR,
   MENU_NAME_ATTR,
   EDIT_BTN_ATTR,
   REMOVE_BTN_ATTR,
-} from '../util/const/elements.js';
-import { getUniqueNumber } from '../util/common.js';
+} from '../utils/constants/elements.js';
+import { getUniqueNumber } from '../utils/common.js';
 
 const menuForm = $('#espresso-menu-form');
 const menuInput = <HTMLInputElement>$('#espresso-menu-name');
@@ -40,23 +35,17 @@ const createMenuList = (newMenuName: string, uuid: number) => {
 };
 
 const createMenuListItems = (uuid: number) => {
-  const { ID } = MENU_LIST_ATTR;
-  const newConstants = { ...MENU_LIST_ATTR, ID: `${ID}-${uuid}` };
-  const options = getElCreationOptions(newConstants);
-  return addElement(options);
+  const { id } = MENU_LIST_ATTR;
+  return addElement({ ...MENU_LIST_ATTR, id: `${id}-${uuid}` });
 };
 const createMenuName = (newMenuName: string) => {
-  const newConstants = { ...MENU_NAME_ATTR, TEXT: newMenuName };
-  const options = getElCreationOptions(newConstants);
-  return addElement(options);
+  return addElement({ ...MENU_NAME_ATTR, text: newMenuName });
 };
 const createEditBtn = () => {
-  const options = getElCreationOptions(EDIT_BTN_ATTR);
-  return addElement(options);
+  return addElement(EDIT_BTN_ATTR);
 };
 const createRemoveBtn = () => {
-  const options = getElCreationOptions(REMOVE_BTN_ATTR);
-  return addElement(options);
+  return addElement(REMOVE_BTN_ATTR);
 };
 
 /* 메뉴 수정 */
