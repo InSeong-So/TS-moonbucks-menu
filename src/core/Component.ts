@@ -1,5 +1,5 @@
-import { $, addEvent } from '../utils/getUUID';
-import { ReturnCreateStore } from './myRedux';
+import { $, addEvent } from '../utils/util.js';
+import { ReturnCreateStore } from './myRedux.js';
 
 type BindEvent = {
   eventType: string;

@@ -11,6 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/InSeong-So/TS-moonbucks-menu.git"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
