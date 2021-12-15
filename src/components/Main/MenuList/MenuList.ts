@@ -40,6 +40,7 @@ export default class MenuList extends Component {
     }
   }
 
+  // service 에서 ui control 까지 맡기기
   async onEdit(e: MouseEvent) {
     const { target } = e;
     if ((target as Element).closest(SELECTORS.CLASS.MENU_EDIT_BUTTON)) {
@@ -47,7 +48,7 @@ export default class MenuList extends Component {
       this.service.edit(id);
     }
   }
-
+  // ui 컨트롤은 component 에 맡기기
   async onDelete(e: MouseEvent) {
     const { target } = e;
     if ((target as Element).closest(SELECTORS.CLASS.MENU_REMOVE_BUTTON)) {
