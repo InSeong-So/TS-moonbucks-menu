@@ -7,7 +7,7 @@
     // tsc
     "target": "ES5",
     // 컴파일된 파일 출력 경로
-    "outDir": "./dist",
+    "outDir": "dist",
     // 프로미스 베이스
     "importHelpers": true,
     "moduleResolution": "Node",

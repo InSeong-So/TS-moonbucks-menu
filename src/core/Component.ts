@@ -1,5 +1,5 @@
-import { $, addEvent } from '../utils/util.js';
-import { ReturnCreateStore } from './myRedux.js';
+import getSingletonStore from '../modules/getSingletonStore';
+import { $, addEvent } from '../utils/util';
 
 type BindEvent = {
   eventType: string;
@@ -13,27 +13,39 @@ interface CoreComponent {
 
 export default class Component implements CoreComponent {
   private key: string;
-  private store: any;
+  protected store;
   protected $component: HTMLElement;
-  protected $parent: HTMLElement;
-  props: Record<string, any>;
-
-  constructor(
-    key: string,
-    store: ReturnCreateStore<any, any>,
-    $parent: HTMLElement,
-    props: Record<string, any>,
-  ) {
-    if (!$parent) {
+  protected $parent;
+  protected props;
+  private static keyBucket: Set<string> = new Set();
+  constructor({
+    key,
+    $parent,
+    props,
+  }: {
+    key: string;
+    $parent?: HTMLElement;
+    props?: Record<string, any>;
+  }) {
+    this.key = key;
+    // this._setupKey(this.key);
+    if ($parent === undefined) {
       this.$parent = $('body');
     }
     this.$parent = $parent;
-    this.$component = $(`[data-component=${key}]`, this.$parent);
+    this.$component = $(`[data-component=${this.key}]`, this.$parent);
     this.props = props;
-    this.store = store;
-    store.subscribe(this.key, this.render.bind(this));
+    this.store = getSingletonStore();
+    this.store.subscribe(this.key, this.render.bind(this));
     this.render();
     this.setEvents();
+  }
+  _setupKey(key: string) {
+    if (Component.keyBucket.has(key)) {
+      throw new Error('Component는 중복된 키값을 가질 수 없습니다.');
+    } else {
+      Component.keyBucket.add(key);
+    }
   }
   template() {
     return '';
@@ -46,7 +58,10 @@ export default class Component implements CoreComponent {
   }
 
   bindEvents() {
-    return [];
+    return [] as {
+      eventType: string;
+      callback: (...args: any[]) => any;
+    }[];
   }
 
   setEvents() {

@@ -1,6 +1,6 @@
-import { createStore } from '../core/myRedux.js';
-import { Coffee } from './constants.js';
-import reducer from './reducer.js';
+import { createStore } from '../core/myRedux';
+import { Coffee } from './constants';
+import reducer from './reducer';
 
 const defaultState = {
   currentTab: Coffee.espresso.key,
