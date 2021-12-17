@@ -28,8 +28,7 @@
 <br>
 
 ## ✔ 진행순서
-### 1주차
-🎯 step1 요구사항 - 돔 조작과 이벤트 핸들링으로 메뉴 관리하기 / 타입스크립트 변환
+### 1주차 : 🎯 step1 요구사항 - 돔 조작과 이벤트 핸들링으로 메뉴 관리하기 / 타입스크립트 변환
 
 <br>
 
@@ -63,7 +62,8 @@
 <br>
 <hr>
 <br>
-<br/>
+<details><summary>📹자바스크립트 문 벅스 요구사항, <strong>자세히보기!!</strong>👈</summary>
+<br>
 <p align="middle">
   <img width="200px;" src="./src/images/moonbucks.png"/>
 </p>
@@ -309,3 +309,8 @@ live-server 폴더명
 ## 📝 License
 
 This project is [MIT](https://github.com/blackcoffee-study/moonbucks-menu/blob/main/LICENSE) licensed.
+    
+<br>
+
+</details>
+
