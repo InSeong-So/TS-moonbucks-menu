@@ -1,7 +1,12 @@
 import { $ } from './utils/index.js';
 
+interface State {
+  categoryNames: string[];
+  menuNames: string[];
+}
+
 export default class App {
-  private state: object;
+  private state: State;
   private template: string;
   private mainElementId: string;
 
@@ -67,10 +72,64 @@ export default class App {
         </div>
     </div>
     `;
-    this.render();
+    $(this.mainElementId).innerHTML = this.template;
+    this.bindEvent();
   }
 
-  render(): void {
-    $(this.mainElementId).innerHTML = this.template;
+  render(elementId: string): void {
+    // state에 맞춰서 html 변경
+    if (elementId === '#espresso-menu-list') {
+      let html = '';
+      this.state.menuNames.forEach((value, index) => {
+        html += `
+          <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
+            <span class="w-100 pl-2 menu-name">${value}</span>
+          </li>`;
+      });
+      $(elementId).innerHTML = html;
+    }
+  }
+
+  bindEvent(): void {
+    $('main').addEventListener(
+      'click',
+      e => {
+        const target = e.target as HTMLElement;
+        if (!target) {
+          return;
+        }
+
+        if (target.id && target.id === 'espresso-menu-submit-button') {
+          this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
+          this.render('#espresso-menu-list');
+        }
+      },
+      false,
+    );
+
+    $('main').addEventListener(
+      'keydown',
+      e => {
+        const target = e.target as HTMLElement;
+        if (
+          e.key === 'Enter' &&
+          target.id &&
+          target.id === 'espresso-menu-name'
+        ) {
+          this.addMenuName(target as HTMLInputElement);
+          this.render('#espresso-menu-list');
+          e.preventDefault();
+        }
+      },
+      false,
+    );
+  }
+
+  addMenuName(input: HTMLInputElement) {
+    if (!input.value.trim()) {
+      return;
+    }
+    this.state.menuNames.push(input.value);
+    input.value = '';
   }
 }
