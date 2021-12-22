@@ -2,7 +2,11 @@ import { $ } from '../utils/domController.js';
 import { menuStore } from '../store/index.js';
 import renderDefaultLayouts from '../components/layout/index.js';
 import renderMenuList from '../components/MenuItem.js';
-import { createMenuItem, editMenuItem, removeMenuItem } from '../store/menu.js';
+import {
+  createMenuItem,
+  editMenuItem,
+  removeMenuItem,
+} from '../store/modules/menu.js';
 
 renderDefaultLayouts('#app');
 
