@@ -1,14 +1,17 @@
 import { $ } from '../utils/domController.js';
 import { menuStore } from '../store/index.js';
+import renderDefaultLayouts from '../components/layout/index.js';
 import renderMenuList from '../components/MenuItem.js';
 import { createMenuItem, editMenuItem, removeMenuItem } from '../store/menu.js';
+
+renderDefaultLayouts('#app');
+
+// TODO: 구독을 언제 어디서 해줘야하나?
+menuStore.subscribe(renderMenuList);
 
 const menuForm = $('#espresso-menu-form');
 const menuInput = <HTMLInputElement>$('#espresso-menu-name');
 const menuList = $('#espresso-menu-list');
-
-// TODO: 구독을 언제 어디서 해줘야하나?
-menuStore.subscribe(renderMenuList);
 
 menuForm.addEventListener('submit', (e: Event) => {
   e.preventDefault();
