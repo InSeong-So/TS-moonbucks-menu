@@ -18,39 +18,40 @@ export const createMenuItem = (menuName: string) => {
   };
 };
 
-export const editMenuItem = (menuId: number, text: string) => {
+export const editMenuItem = (menuIdx: number, menuName: string) => {
   return {
     type: EDIT_MENU,
-    text,
+    menuIdx,
+    text: menuName,
   };
 };
 
-export const removeMenuItem = (menuId: number) => {
+export const removeMenuItem = (menuIdx: number) => {
   return {
     type: REMOVE_MENU,
-    menuId,
+    menuIdx,
   };
 };
 
 // 리듀서는 새로운 상태를 생성하는 함수.
 export function reducer(state = initialState, action: actionType) {
-  console.log('여기는 reducer, action객체 확인>>', action);
-  console.log('reducer state>>', state);
+  const { type, menuIdx = 0, text = '' } = action;
+  const { menus } = state;
 
-  const { type, text = '' } = action;
   switch (type) {
-    case CREATE_MENU:
-      state.menus.push(text);
-      return state;
-    case EDIT_MENU:
-      return {
-        ...state,
-        text,
-      };
-    case REMOVE_MENU:
-      return {
-        ...state,
-      };
+    case CREATE_MENU: {
+      const newState = menus.concat([text]);
+      return { menus: newState };
+    }
+    case EDIT_MENU: {
+      const newState = [...menus];
+      newState[menuIdx] = text;
+      return { menus: newState };
+    }
+    case REMOVE_MENU: {
+      const newState = menus.filter(menu => menu !== menus[menuIdx]);
+      return { menus: newState };
+    }
     default:
       return state;
   }

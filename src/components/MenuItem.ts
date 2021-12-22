@@ -1,15 +1,13 @@
 import { $ } from '../utils/domController.js';
 import { menuStore } from '../store/index.js';
 
-function MenuList() {
-  const menus = menuStore.getState().menus;
+const render = () => {
+  const { menus } = menuStore.getState();
 
-  const render = () => {
-    console.log('렌더링을 실행합니다.', menus);
-    $('#espresso-menu-list').innerHTML = menus
-      .map(
-        (menu, index) =>
-          `<li id="espresso-menu-id-${index}" class="menu-list-item d-flex items-center py-2">
+  $('#espresso-menu-list').innerHTML = menus
+    .map(
+      (menu, index) =>
+        `<li id="espresso-menu-id-${index}" class="menu-list-item d-flex items-center py-2">
   <span id="espresso-menu-name" class="w-100 pl-2 menu-name">${menu}</span>
   <button
     type="button"
@@ -26,10 +24,8 @@ function MenuList() {
     삭제
   </button>
 </li>`,
-      )
-      .join('\n');
-  };
-  menuStore.subscribe(render);
-}
+    )
+    .join('\n');
+};
 
-export default MenuList;
+export default render;
