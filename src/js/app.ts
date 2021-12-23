@@ -89,6 +89,8 @@ export default class App {
           </li>`;
       });
       $(elementId).innerHTML = html;
+    } else if (elementId === '.menu-count') {
+      $(elementId).innerHTML = `총 ${this.state.menuNames.length}개`;
     }
   }
 
@@ -104,6 +106,7 @@ export default class App {
         if ($target.id && $target.id === 'espresso-menu-submit-button') {
           this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
           this.render('#espresso-menu-list');
+          this.render('.menu-count');
           e.preventDefault();
         } else if ($target.classList.contains('menu-edit-button')) {
           const $item = $target.closest('.menu-list-item') as HTMLInputElement;
@@ -123,6 +126,7 @@ export default class App {
           if (isDelete && index >= 0) {
             this.state.menuNames.splice(index, 1);
             this.render('#espresso-menu-list');
+            this.render('.menu-count');
           }
           e.preventDefault();
         }
@@ -141,6 +145,7 @@ export default class App {
         ) {
           this.addMenuName($target as HTMLInputElement);
           this.render('#espresso-menu-list');
+          this.render('.menu-count');
           e.preventDefault();
         }
       },
