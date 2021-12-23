@@ -84,6 +84,7 @@ export default class App {
         html += `
           <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
             <span class="w-100 pl-2 menu-name">${value}</span>
+            <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button">수정</button>
           </li>`;
       });
       $(elementId).innerHTML = html;
@@ -94,14 +95,25 @@ export default class App {
     $('main').addEventListener(
       'click',
       e => {
-        const target = e.target as HTMLElement;
-        if (!target) {
+        const $target = e.target as HTMLElement;
+        if (!$target) {
           return;
         }
 
-        if (target.id && target.id === 'espresso-menu-submit-button') {
+        if ($target.id && $target.id === 'espresso-menu-submit-button') {
           this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
           this.render('#espresso-menu-list');
+          e.preventDefault();
+        } else if ($target.classList.contains('menu-edit-button')) {
+          const $item = $target.closest('.menu-list-item') as HTMLInputElement;
+          const index = Number($item.getAttribute('data-menu-id'));
+          const changeValue = prompt('메뉴명을 수정하세요')?.trim();
+
+          if (changeValue && index >= 0) {
+            this.state.menuNames[index] = changeValue;
+            this.render('#espresso-menu-list');
+          }
+          e.preventDefault();
         }
       },
       false,
@@ -110,13 +122,13 @@ export default class App {
     $('main').addEventListener(
       'keydown',
       e => {
-        const target = e.target as HTMLElement;
+        const $target = e.target as HTMLElement;
         if (
           e.key === 'Enter' &&
-          target.id &&
-          target.id === 'espresso-menu-name'
+          $target.id &&
+          $target.id === 'espresso-menu-name'
         ) {
-          this.addMenuName(target as HTMLInputElement);
+          this.addMenuName($target as HTMLInputElement);
           this.render('#espresso-menu-list');
           e.preventDefault();
         }
@@ -125,11 +137,11 @@ export default class App {
     );
   }
 
-  addMenuName(input: HTMLInputElement) {
-    if (!input.value.trim()) {
+  addMenuName($input: HTMLInputElement): void {
+    if (!$input.value.trim()) {
       return;
     }
-    this.state.menuNames.push(input.value);
-    input.value = '';
+    this.state.menuNames.push($input.value);
+    $input.value = '';
   }
 }
