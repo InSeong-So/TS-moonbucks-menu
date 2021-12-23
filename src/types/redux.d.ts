@@ -5,16 +5,14 @@ declare module 'redux' {
 
   export interface Action<T = any> {
     type: T;
+    [key: string]: any;
   }
 
   export interface AnyAction extends Action {
     [key: string | symbol]: any;
   }
 
-  export type Reducer<S = any, A extends Action = AnyAction> = (
-    state?: S,
-    action?: A,
-  ) => S;
+  export type Reducer<S = any, A extends Action = AnyAction> = (state?: S, action?: A) => S;
 
   export interface Dispatch<A extends Action = AnyAction> {
     <T extends A>(action: T, ...extraArgs: any[]): T;

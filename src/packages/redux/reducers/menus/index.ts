@@ -19,7 +19,6 @@ interface StateProps {
 }
 
 const initialState: StateProps = {
-  // @todo array to object
   categories: [
     { id: 'espresso', text: '☕ 에스프레소', menus: [] },
     { id: 'frappuccino', text: '🥤 프라푸치노', menus: [] },
@@ -40,9 +39,7 @@ const menus: Reducer = (state = initialState, action = { type: '' }) => {
       return {
         ...state,
         categories: selectedMenu,
-        selected: selectedMenu.find(
-          (category: CategoryProps) => category.id === action.category,
-        ),
+        selected: selectedMenu.find((category: CategoryProps) => category.id === action.category),
       };
     }
     case INSERT_MENU_SUCCESS: {
@@ -57,9 +54,7 @@ const menus: Reducer = (state = initialState, action = { type: '' }) => {
       return {
         ...state,
         categories: insertedMenu,
-        selected: insertedMenu.find(
-          (category: CategoryProps) => category.id === action.category,
-        ),
+        selected: targetCategory,
       };
     }
     case MODIFY_MENU_SUCCESS:
@@ -77,9 +72,7 @@ const menus: Reducer = (state = initialState, action = { type: '' }) => {
       return {
         ...state,
         categories: updatedMenu,
-        selected: updatedMenu.find(
-          (category: CategoryProps) => category.id === action.category,
-        ),
+        selected: updatedMenu.find((category: CategoryProps) => category.id === action.category),
       };
     }
     case REMOVE_MENU_SUCCESS: {
@@ -93,9 +86,7 @@ const menus: Reducer = (state = initialState, action = { type: '' }) => {
       return {
         ...state,
         categories: removedMenu,
-        selected: removedMenu.find(
-          (category: CategoryProps) => category.id === action.category,
-        ),
+        selected: removedMenu.find((category: CategoryProps) => category.id === action.category),
       };
     }
     /**

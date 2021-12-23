@@ -11,3 +11,5 @@ export const HTTP_METHOD = <const>{
   PATCH: 'PATCH',
   DELETE: 'DELETE',
 };
+
+export const EVENT_TYPE_CLICK = 'click';

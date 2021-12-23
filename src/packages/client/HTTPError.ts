@@ -15,12 +15,7 @@ export default class HTTPError extends Error {
   public method: string;
   public requestData: object;
 
-  constructor(
-    message: string,
-    name: string,
-    code: number,
-    request: ReqeustParameter,
-  ) {
+  constructor(message: string, name: string, code: number, request: ReqeustParameter) {
     super(message);
 
     /**

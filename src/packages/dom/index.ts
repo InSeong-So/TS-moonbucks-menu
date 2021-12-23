@@ -1,2 +1,3 @@
-export { default as Component } from './Component';
-export { default as diffRender } from './diffRender';
+export { default as parse } from './parser';
+export { default as Component } from './component';
+export { default as diffRender } from './diff';
