@@ -85,6 +85,7 @@ export default class App {
           <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
             <span class="w-100 pl-2 menu-name">${value}</span>
             <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button">수정</button>
+            <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-delete-button">삭제</button>
           </li>`;
       });
       $(elementId).innerHTML = html;
@@ -111,6 +112,16 @@ export default class App {
 
           if (changeValue && index >= 0) {
             this.state.menuNames[index] = changeValue;
+            this.render('#espresso-menu-list');
+          }
+          e.preventDefault();
+        } else if ($target.classList.contains('menu-delete-button')) {
+          const $item = $target.closest('.menu-list-item') as HTMLInputElement;
+          const index = Number($item.getAttribute('data-menu-id'));
+          const isDelete = confirm('정말 삭제하시겠습니까?');
+
+          if (isDelete && index >= 0) {
+            this.state.menuNames.splice(index, 1);
             this.render('#espresso-menu-list');
           }
           e.preventDefault();
