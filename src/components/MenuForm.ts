@@ -1,8 +1,12 @@
+import { menuStore } from '../store/index.js';
+
 const MenuForm = () => {
+  const { menus } = menuStore.getState();
+
   return `
   <div class="heading d-flex justify-between">
     <h2 class="mt-1">☕ 에스프레소 메뉴 관리</h2>
-    <span id="menu-count" class="mr-2 mt-4 menu-count">총 0개</span>
+    <span id="menu-count" class="mr-2 mt-4 menu-count">총 ${menus.length}개</span>
   </div>
   <form id="espresso-menu-form">
     <div class="d-flex w-100">

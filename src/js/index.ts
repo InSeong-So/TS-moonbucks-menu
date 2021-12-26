@@ -13,8 +13,9 @@ renderDefaultLayouts('#app');
 // TODO: 구독을 언제 어디서 해줘야하나?
 menuStore.subscribe(renderMenuList);
 
+// TODO: 타입 단언문을 선언문으로 변경
 const menuForm = $('#espresso-menu-form');
-const menuInput = <HTMLInputElement>$('#espresso-menu-name');
+const menuInput = $('#espresso-menu-name') as HTMLInputElement;
 const menuList = $('#espresso-menu-list');
 
 menuForm.addEventListener('submit', (e: Event) => {
@@ -26,8 +27,8 @@ menuForm.addEventListener('submit', (e: Event) => {
 });
 
 menuList.addEventListener('click', (e: Event) => {
-  const target = <HTMLElement>e.target;
-  const targetNodeId = (<HTMLElement>target.parentElement).id;
+  const target = e.target as HTMLElement;
+  const targetNodeId = (target.parentElement as HTMLElement).id;
   const targetNodeIndex = targetNodeId.split('-')[3];
   if (target.matches('.menu-edit-button')) {
     editMenu(parseInt(targetNodeIndex));
@@ -38,10 +39,9 @@ menuList.addEventListener('click', (e: Event) => {
 
 const createMenu = (menuName: string) => {
   const { menus } = menuStore.getState();
-  if (menus && menus.length === 20) {
-    alert('메뉴는 20개까지 추가 가능합니다.');
-    return;
-  }
+  if (menus && menus.length === 20)
+    return alert('메뉴는 20개까지 추가 가능합니다.');
+
   menuStore.dispatch(createMenuItem(menuName));
 };
 
@@ -54,6 +54,7 @@ const editMenu = (menuId: number) => {
 const removeMenu = (menuId: number) => {
   if (!confirm('메뉴를 삭제하시겠습니까?')) return;
   menuStore.dispatch(removeMenuItem(menuId));
+  // TODO: 구독으로 실행!
   setTotalCountText();
 };
 
