@@ -6,7 +6,7 @@ export type Action<AType = any, TPayload = any> = {
   payload: TPayload;
 };
 type Reducer<TState, TAction> = (state: TState, action: TAction) => TState;
-export type ReturnCreateStore<TState, TAction> = {
+export type ReturnCreateStore<TState = any, TAction = any> = {
   reset: () => void;
   getState: () => Readonly<TState>;
   dispatch: (action: TAction) => void;
@@ -30,6 +30,7 @@ export function createStore<TState, TActions>(
     dispatch: action => {
       const result = reducer(currentState, action);
       currentState = result;
+      console.log(listeners);
       listeners.forEach(fn => fn());
     },
 

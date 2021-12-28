@@ -8,14 +8,19 @@ export function getUUID(): string {
   // 출처: https://goni9071.tistory.com/209 [고니의꿈]
 }
 
-type Dollar = (selector: string, target: Document) => Element;
+type Dollar = (selector: string, target?: HTMLElement) => HTMLElement;
 
-export const $: Dollar = (selector, target = window.document) => {
-  const el = target.querySelector(selector);
+export const $: Dollar = (selector, target) => {
+  let el;
+  if (target === undefined || target === null) {
+    el = window.document.querySelector(selector);
+  } else {
+    el = target.querySelector(selector);
+  }
   if (el === null) {
     throw new Error('$ should return HTMLElement not undefined');
   }
-  return el;
+  return el as HTMLElement;
 };
 export function addEvent(
   el: HTMLElement,
