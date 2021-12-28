@@ -1,4 +1,6 @@
-import { notationConvert } from '@/helpers';
+import { util } from '@/helpers';
+
+const { notationConvert } = util;
 
 type HashRouteCallback = (params: string) => void;
 
@@ -78,9 +80,7 @@ export default class Router {
   };
 
   setActive = (route: string) => {
-    const $$a = <NodeListOf<HTMLElement>>(
-      document.querySelectorAll('.cafe-category-name')
-    );
+    const $$a = <NodeListOf<HTMLElement>>document.querySelectorAll('.cafe-category-name');
     $$a.forEach(link => {
       if (link.dataset[this.dataset] === route) link.classList.add('active');
       else link.classList.remove('active');

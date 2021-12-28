@@ -1,51 +1,40 @@
-import { MenuItemProps } from 'component';
-import { createActionType } from '../../common';
+import createRequestSaga, { createRequestActionType } from '@/redux/sagas/createRequestSaga';
+import { loadMenu, insertItem, modifyItem, soldOutItem, removeItem } from '~/src/api/menus';
+import { takeEvery } from '../../sagas/saga';
 
 export const [LOAD_MENU, LOAD_MENU_SUCCESS, LOAD_MENU_FAILURE] =
-  createActionType('menu/LOAD_MENU');
+  createRequestActionType('LOAD_MENU');
 
 export const [INSERT_MENU_ITEM, INSERT_MENU_SUCCESS, INSERT_MENU_FAILURE] =
-  createActionType('menu/INSERT_MENU_ITEM');
+  createRequestActionType('INSERT_MENU_ITEM');
 
 export const [MODIFY_MENU_ITEM, MODIFY_MENU_SUCCESS, MODIFY_MENU_FAILURE] =
-  createActionType('menu/MODIFY_MENU_ITEM');
+  createRequestActionType('MODIFY_MENU_ITEM');
 
-export const [
-  SOLD_OUT_MENU_ITEM,
-  SOLD_OUT_MENU_SUCCESS,
-  SOLD_OUT_MENU_FAILURE,
-] = createActionType('menu/SOLD_OUT_MENU_ITEM');
+export const [SOLD_OUT_MENU_ITEM, SOLD_OUT_MENU_SUCCESS, SOLD_OUT_MENU_FAILURE] =
+  createRequestActionType('SOLD_OUT_MENU_ITEM');
 
 export const [REMOVE_MENU_ITEM, REMOVE_MENU_SUCCESS, REMOVE_MENU_FAILURE] =
-  createActionType('menu/REMOVE_MENU_ITEM');
+  createRequestActionType('REMOVE_MENU_ITEM');
 
-export const loadMenu = (category: string) => ({
-  type: LOAD_MENU,
-  category,
-});
+export const loadMenuRequest = (action: any) => createRequestSaga(LOAD_MENU, loadMenu, action);
 
-export const insertMenuItem = <T>(category: T, name: T) => ({
-  type: INSERT_MENU_ITEM,
-  category,
-  name,
-});
+export const insertItemRequest = (action: any) =>
+  createRequestSaga(INSERT_MENU_ITEM, insertItem, action);
 
-export const modifyMenuItem = <T>(category: T, menuId: T, name: string) => ({
-  type: MODIFY_MENU_ITEM,
-  category,
-  menuId,
-  name,
-});
+export const modifyItemRequest = (action: any) =>
+  createRequestSaga(MODIFY_MENU_ITEM, modifyItem, action);
 
-export const soldOutMenuItem = <T>(category: T, menuId: T, data: T) => ({
-  type: SOLD_OUT_MENU_ITEM,
-  category,
-  menuId,
-  data,
-});
+export const soldOutItemRequest = (action: any) =>
+  createRequestSaga(SOLD_OUT_MENU_ITEM, soldOutItem, action);
 
-export const removeMenuItem = <T>(category: T, menuId: T) => ({
-  type: REMOVE_MENU_ITEM,
-  category,
-  menuId,
-});
+export const removeItemRequest = (action: any) =>
+  createRequestSaga(REMOVE_MENU_ITEM, removeItem, action);
+
+export function* menuSaga() {
+  yield* takeEvery(LOAD_MENU, loadMenuRequest);
+  yield* takeEvery(INSERT_MENU_ITEM, insertItemRequest);
+  yield* takeEvery(MODIFY_MENU_ITEM, modifyItemRequest);
+  yield* takeEvery(SOLD_OUT_MENU_ITEM, soldOutItemRequest);
+  yield* takeEvery(REMOVE_MENU_ITEM, removeItemRequest);
+}

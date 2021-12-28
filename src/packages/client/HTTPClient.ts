@@ -78,10 +78,7 @@ export default class HTTPClient {
      * 참조 https://developer.mozilla.org/ko/docs/Web/API/AbortController
      */
     const controller = new AbortController();
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      LIMIT_DELAY_TWO_SECOND,
-    );
+    const timeoutId = setTimeout(() => controller.abort(), LIMIT_DELAY_TWO_SECOND);
     const config: ReqeustParameter = {
       method,
       headers: requestHeaders,

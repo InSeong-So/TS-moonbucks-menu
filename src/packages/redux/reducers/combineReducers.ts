@@ -19,8 +19,7 @@ const setCallback = (target: AnyState, callback: any) => {
  */
 const getErrorMessage = (key: string, action: Action) => {
   const actionType = action && action.type;
-  const actionName =
-    (actionType && `"${actionType.toString()}"`) || 'an action';
+  const actionName = (actionType && `"${actionType.toString()}"`) || 'an action';
 
   return (
     `Reducer ${key}가 ${actionName}을 처리하여 undefined를 반환했습니다. ` +
@@ -30,15 +29,12 @@ const getErrorMessage = (key: string, action: Action) => {
 
 const combineReducers = (reducers: AnyState) => {
   // 메서드만 선택하기 : 그 외의 것은 추가하지 않습니다.
-  const filteredReducers = Object.keys(reducers).reduce(
-    (filtered: AnyState, key) => {
-      if (typeof reducers[key] === 'function') {
-        filtered[key] = reducers[key];
-      }
-      return filtered;
-    },
-    {},
-  );
+  const filteredReducers = Object.keys(reducers).reduce((filtered: AnyState, key) => {
+    if (typeof reducers[key] === 'function') {
+      filtered[key] = reducers[key];
+    }
+    return filtered;
+  }, {});
 
   // 불변성 체크하기 : 이상이 있다면 아래 로직은 실행되지 않습니다.
   Object.keys(filteredReducers).forEach(key => {
@@ -55,13 +51,10 @@ const combineReducers = (reducers: AnyState) => {
   });
 
   // 객체 내의 모든 키-값 쌍을 초기화
-  const defaultState = Object.keys(filteredReducers).reduce(
-    (result: AnyState, key) => {
-      result[key] = undefined;
-      return result;
-    },
-    {},
-  );
+  const defaultState = Object.keys(filteredReducers).reduce((result: AnyState, key) => {
+    result[key] = undefined;
+    return result;
+  }, {});
 
   // 클로저 활용
   return (state = defaultState, action: Action) => {

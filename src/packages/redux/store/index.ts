@@ -1,6 +1,11 @@
+import createStore from './createStore';
 import rootReducer from '@/redux/reducers';
-import sagaWrapper from '@/redux/sagas';
-import { createStore } from '@/redux/common';
+import { runSaga } from '@/redux/sagas/saga';
 import { Reducer } from 'redux';
+import { menuSaga } from '@/redux/reducers/menus/actions';
 
-export default createStore(sagaWrapper(<Reducer>rootReducer));
+const store = createStore(<Reducer>rootReducer);
+
+runSaga(store, menuSaga);
+
+export default store;

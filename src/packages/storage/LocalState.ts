@@ -37,10 +37,7 @@ class LocalState extends Storage<ParangStorageKey | string> {
   }
 
   clear() {
-    this.clearItems([
-      ParangStorageKey.ACCESS_TOKEN,
-      ParangStorageKey.REFRESH_TOKEN,
-    ]);
+    this.clearItems([ParangStorageKey.ACCESS_TOKEN, ParangStorageKey.REFRESH_TOKEN]);
   }
 }
 

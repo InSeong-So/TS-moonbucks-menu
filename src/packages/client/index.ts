@@ -20,12 +20,9 @@ const http = {
     });
   },
   async insert({ category }: { category: string }, params: any) {
-    return await httpClient.post(
-      `/api/category/${category}/menu`,
-      params,
-      null,
-      { from: `Create "${category}" "${params.data}"` },
-    );
+    return await httpClient.post(`/api/category/${category}/menu`, params, null, {
+      from: `Create "${category}" "${params.data}"`,
+    });
   },
   async update(action: AnyAction, params: any) {
     return await httpClient.put(
@@ -44,11 +41,9 @@ const http = {
     );
   },
   async delete(action: AnyAction) {
-    return await httpClient.delete(
-      `/api/category/${action.category}/menu/${action.menuId}`,
-      null,
-      { from: `Delete "${action.category}" menu` },
-    );
+    return await httpClient.delete(`/api/category/${action.category}/menu/${action.menuId}`, null, {
+      from: `Delete "${action.category}" menu`,
+    });
   },
 };
 

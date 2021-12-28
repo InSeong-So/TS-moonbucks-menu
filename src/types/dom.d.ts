@@ -1,18 +1,26 @@
 declare module 'component' {
-  export interface Components {
-    initialized?(): void;
+  export interface RootComponent {
+    initialize?(): void;
 
     template?(): string;
 
     render?(): void;
 
     mount?(): void;
+
+    eventGroup?(): ComponentEvent[];
+
+    bindEventGroup?(): void;
   }
 
+  export type ComponentEvent = {
+    type: string;
+    callback: (...params: any[]) => void;
+  };
+
   export interface ComponentProp {
-    route?: string;
-    selected?: CategoryProps;
-    components?: any[];
+    title?: string;
+    currentTab?: CategoryProps;
   }
   export type ComponentProps = ComponentProp | void;
 
@@ -28,3 +36,5 @@ declare module 'component' {
     isSoldOut: boolean;
   }
 }
+
+declare module 'dom' {}
