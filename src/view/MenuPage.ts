@@ -1,9 +1,11 @@
-const MenuPage = ({ id, text }: { id: string; text: string }) => {
+import { MenuItemProps } from 'component';
+
+const MenuPage = ({ id, text, menus }: { id: string; text: string; menus: MenuItemProps[] }) => {
   return `
     <div class="wrapper bg-white p-10">
       <div class="heading d-flex justify-between">
         <h2 class="mt-1">${text} 메뉴 관리</h2>
-        <span class="mr-2 mt-4 menu-count">총 0개</span>
+        <span class="mr-2 mt-4 menu-count">총 ${menus.length}개</span>
       </div>
       <form id="${id}-menu-form">
         <div class="d-flex w-100">
@@ -18,7 +20,7 @@ const MenuPage = ({ id, text }: { id: string; text: string }) => {
           </button>
         </div>
       </form>
-      <ul id="${id}-menu-list" class="mt-3 pl-0"></ul>
+      <ul id="${id}-menu-list" class="mt-3 pl-0" data-component="MenuList"></ul>
     </div>
     `;
 };

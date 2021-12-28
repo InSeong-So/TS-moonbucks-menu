@@ -1,10 +1,12 @@
+import { TDomGetter } from 'dom';
+
 /**
  *
  * @param selector
  * @returns
  */
-const $ = (selector: string) => {
-  return <HTMLElement>document.querySelector(selector);
+const $: TDomGetter = selector => {
+  return document.querySelector(selector) as HTMLElement;
 };
 
 /**
@@ -13,7 +15,7 @@ const $ = (selector: string) => {
  * @returns
  */
 const $all = (selector: string) => {
-  return <NodeListOf<HTMLElement>>document.querySelectorAll(selector);
+  return document.querySelectorAll(selector) as NodeListOf<HTMLElement>;
 };
 
 /**
@@ -44,6 +46,31 @@ const $closest2 = (element: HTMLElement, selector: string) => {
   }
   return false;
 };
+
+/**
+ * 컴포넌트의 상위 컴포넌트를 반환합니다.
+ *
+ * @param selector
+ * @returns
+ */
+const $parentComponent: TDomGetter = selector => {
+  let $element: HTMLElement = $(selector);
+  while ($element.parentElement !== null) {
+    const parent = $element.parentElement as HTMLElement;
+    if (parent.tagName === 'BODY' || parent.getAttribute('data-component') !== null) break;
+    $element = parent;
+  }
+  return $element.parentElement as HTMLElement;
+};
+
+/**
+ *
+ * @param $element
+ * @param selector
+ * @returns
+ */
+const $attr = ($element: HTMLElement, selector: string | void) =>
+  $element.getAttribute(selector || 'data-component');
 
 /**
  * 이벤트 등록
@@ -83,11 +110,22 @@ const $showAlert = (type: string, description = '') => {
   return '';
 };
 
+const $compareInner = (template1: string, template2: string) => {
+  const parsed1 = template1.replace(/[\\n]|[?=\s]*/gi, '');
+  const parsed2 = template2.replace(/[\\n]|[?=\s]*/gi, '');
+  const compare = parsed1 === parsed2;
+  return [`${compare}`, compare ? template1 : template2];
+};
+
 export default {
   $,
   $all,
   $closest,
+  $closest2,
+  $parentComponent,
+  $attr,
   $addEvent,
   $removeEvent,
   $showAlert,
+  $compareInner,
 };
