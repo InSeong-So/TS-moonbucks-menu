@@ -37,4 +37,6 @@ declare module 'component' {
   }
 }
 
-declare module 'dom' {}
+declare module 'dom' {
+  export type TDomGetter = (selector: string) => HTMLElement;
+}

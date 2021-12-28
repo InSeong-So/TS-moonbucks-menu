@@ -16,7 +16,6 @@ class Root extends Component {
 
   mount() {
     const { title } = <ComponentProp>this.$props;
-
     new HeaderContainer('header', { title });
     new MenuPageContainer('main');
   }
