@@ -96,60 +96,52 @@ export default class App {
   }
 
   bindEvent(): void {
-    $('main').addEventListener(
-      'click',
-      e => {
-        const $target = e.target as HTMLElement;
-        if (!$target) return;
+    $('main').addEventListener('click', e => {
+      const $target = e.target as HTMLElement;
+      if (!$target) return;
 
-        if ($target.id && $target.id === 'espresso-menu-submit-button') {
-          this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
+      if ($target.id && $target.id === 'espresso-menu-submit-button') {
+        this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
+        this.render('#espresso-menu-list');
+        this.render('.menu-count');
+        e.preventDefault();
+      } else if ($target.classList.contains('menu-edit-button')) {
+        const $item = $target.closest('.menu-list-item') as HTMLInputElement;
+        const index = Number($item.getAttribute('data-menu-id'));
+        const changeValue = prompt('메뉴명을 수정하세요')?.trim();
+
+        if (changeValue && index >= 0) {
+          this.state.menuNames[index] = changeValue;
+          this.render('#espresso-menu-list');
+        }
+        e.preventDefault();
+      } else if ($target.classList.contains('menu-delete-button')) {
+        const $item = $target.closest('.menu-list-item') as HTMLInputElement;
+        const index = Number($item.getAttribute('data-menu-id'));
+        const isDelete = confirm('정말 삭제하시겠습니까?');
+
+        if (isDelete && index >= 0) {
+          this.state.menuNames.splice(index, 1);
           this.render('#espresso-menu-list');
           this.render('.menu-count');
-          e.preventDefault();
-        } else if ($target.classList.contains('menu-edit-button')) {
-          const $item = $target.closest('.menu-list-item') as HTMLInputElement;
-          const index = Number($item.getAttribute('data-menu-id'));
-          const changeValue = prompt('메뉴명을 수정하세요')?.trim();
-
-          if (changeValue && index >= 0) {
-            this.state.menuNames[index] = changeValue;
-            this.render('#espresso-menu-list');
-          }
-          e.preventDefault();
-        } else if ($target.classList.contains('menu-delete-button')) {
-          const $item = $target.closest('.menu-list-item') as HTMLInputElement;
-          const index = Number($item.getAttribute('data-menu-id'));
-          const isDelete = confirm('정말 삭제하시겠습니까?');
-
-          if (isDelete && index >= 0) {
-            this.state.menuNames.splice(index, 1);
-            this.render('#espresso-menu-list');
-            this.render('.menu-count');
-          }
-          e.preventDefault();
         }
-      },
-      false,
-    );
+        e.preventDefault();
+      }
+    });
 
-    $('main').addEventListener(
-      'keydown',
-      e => {
-        const $target = e.target as HTMLElement;
-        if (
-          e.key === 'Enter' &&
-          $target.id &&
-          $target.id === 'espresso-menu-name'
-        ) {
-          this.addMenuName($target as HTMLInputElement);
-          this.render('#espresso-menu-list');
-          this.render('.menu-count');
-          e.preventDefault();
-        }
-      },
-      false,
-    );
+    $('main').addEventListener('keydown', e => {
+      const $target = e.target as HTMLElement;
+      if (
+        e.key === 'Enter' &&
+        $target.id &&
+        $target.id === 'espresso-menu-name'
+      ) {
+        this.addMenuName($target as HTMLInputElement);
+        this.render('#espresso-menu-list');
+        this.render('.menu-count');
+        e.preventDefault();
+      }
+    });
   }
 
   addMenuName($input: HTMLInputElement): void {
