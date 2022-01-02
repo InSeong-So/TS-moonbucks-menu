@@ -79,16 +79,17 @@ export default class App {
   render(elementId: string): void {
     // state에 맞춰서 html 변경
     if (elementId === '#espresso-menu-list') {
-      let html = '';
-      this.state.menuNames.forEach((value, index) => {
-        html += `
+      $(elementId).innerHTML = this.state.menuNames
+        .map((value, index) => {
+          return `
           <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
             <span class="w-100 pl-2 menu-name">${value}</span>
             <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button">수정</button>
             <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-delete-button">삭제</button>
-          </li>`;
-      });
-      $(elementId).innerHTML = html;
+          </li>
+          `;
+        })
+        .join('');
     } else if (elementId === '.menu-count') {
       $(elementId).innerHTML = `총 ${this.state.menuNames.length}개`;
     }
