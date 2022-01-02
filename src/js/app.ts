@@ -100,9 +100,7 @@ export default class App {
       'click',
       e => {
         const $target = e.target as HTMLElement;
-        if (!$target) {
-          return;
-        }
+        if (!$target) return;
 
         if ($target.id && $target.id === 'espresso-menu-submit-button') {
           this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
