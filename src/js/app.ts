@@ -104,7 +104,6 @@ export default class App {
         this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
         this.render('#espresso-menu-list');
         this.render('.menu-count');
-        e.preventDefault();
       } else if ($target.classList.contains('menu-edit-button')) {
         const $item = $target.closest('.menu-list-item') as HTMLInputElement;
         const index = Number($item.getAttribute('data-menu-id'));
@@ -114,7 +113,6 @@ export default class App {
           this.state.menuNames[index] = changeValue;
           this.render('#espresso-menu-list');
         }
-        e.preventDefault();
       } else if ($target.classList.contains('menu-delete-button')) {
         const $item = $target.closest('.menu-list-item') as HTMLInputElement;
         const index = Number($item.getAttribute('data-menu-id'));
@@ -125,8 +123,8 @@ export default class App {
           this.render('#espresso-menu-list');
           this.render('.menu-count');
         }
-        e.preventDefault();
       }
+      e.preventDefault();
     });
 
     $('main').addEventListener('keydown', e => {
