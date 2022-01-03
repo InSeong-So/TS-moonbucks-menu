@@ -1,7 +1,8 @@
 import renderNavigation from './Navigation.js';
+import { Tprops } from '../../types/store';
 
-const Header = () => {
-  const NavigationComponent = renderNavigation();
+const Header = (props: Tprops) => {
+  const NavigationComponent = renderNavigation(props);
 
   return `<header class="my-4">
     <a href="/" class="text-black">

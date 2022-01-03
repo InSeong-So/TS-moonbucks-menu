@@ -1,14 +1,22 @@
 import { $ } from '../utils/domController.js';
-import { menuStore } from '../store/index.js';
+import store from '../store/index.js';
+import { Tprops, Tmenu } from '../types/store.js';
+import { getCategoryMenus } from '../utils/helper.js';
 
-const render = () => {
-  const { menus } = menuStore.getState();
+const MenuItem = ({ state }: Tprops) => {
+  const { menus, currentTab } = state;
 
-  $('#espresso-menu-list').innerHTML = menus
+  store.subscribe(updateMenuList);
+
+  return render(getCategoryMenus(menus, currentTab));
+};
+
+const render = (menus: Tmenu[]) => {
+  return menus
     .map(
       (menu, index) =>
         `<li id="espresso-menu-id-${index}" class="menu-list-item d-flex items-center py-2">
-  <span id="espresso-menu-name" class="w-100 pl-2 menu-name">${menu}</span>
+  <span id="espresso-menu-name" class="w-100 pl-2 menu-name">${menu.menuName}</span>
   <button
     type="button"
     id="espresso-edit-button"
@@ -25,7 +33,15 @@ const render = () => {
   </button>
 </li>`,
     )
-    .join('\n');
+    .join('');
 };
 
-export default render;
+const updateMenuList = () => {
+  const { menus, currentTab } = store.getState();
+
+  const categoryMenus = getCategoryMenus(menus, currentTab);
+
+  $(`#espresso-menu-list`).innerHTML = render(categoryMenus);
+};
+
+export default MenuItem;
