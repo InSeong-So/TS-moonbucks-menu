@@ -16,7 +16,9 @@ const render = (menus: Tmenu[]) => {
     .map(
       menu =>
         `<li id="${menu.id}" class="menu-list-item d-flex items-center py-2">
-  <span id="espresso-menu-name" class="w-100 pl-2 menu-name">${menu.menuName}</span>
+  <span id="espresso-menu-name" class="w-100 pl-2 menu-name ${
+    menu.inStock || 'sold-out'
+  }">${menu.menuName}</span>
   <button
     type="button"
     id="espresso-edit-button"
@@ -31,7 +33,15 @@ const render = (menus: Tmenu[]) => {
   >
     삭제
   </button>
-</li>`,
+  <button
+    id="espresso-soldout-button"
+    type="button"
+    class="bg-gray-50 text-gray-500 text-sm menu-soldout-button"
+    ${menu.inStock || 'disabled'}
+  >
+    품절
+  </button>
+</li>`
     )
     .join('');
 };

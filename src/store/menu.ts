@@ -5,6 +5,7 @@ import { Tstate } from '../types/store.js';
 const CREATE_MENU = 'CREATE_MENU' as const;
 const EDIT_MENU = 'EDIT_MENU' as const;
 const REMOVE_MENU = 'REMOVE_MENU' as const;
+const SOLD_OUT_MENU = 'SOLD_OUT_MENU' as const;
 const SET_CURRENT_TAB = 'SET_CURRENT_TAB' as const;
 
 /* 액션 생성 함수 */
@@ -31,6 +32,13 @@ export const removeMenuItem = (menuId: string) => ({
   },
 });
 
+export const soldOutMenuItem = (menuId: string) => ({
+  type: SOLD_OUT_MENU,
+  payload: {
+    menuId,
+  },
+});
+
 export const setCurrentTab = (categoryId: string) => ({
   type: SET_CURRENT_TAB,
   payload: {
@@ -50,7 +58,8 @@ export default function reducer(state: Tstate, action: TmenuAction) {
         return menu.categoryId === categoryId;
       });
       const id = `${categoryId}-menu-id-${categoryMenus.length}`;
-      const newMenuList = [...menus, { id, categoryId, menuName }];
+      const newMenu = { id, categoryId, menuName, inStock: true };
+      const newMenuList = [...menus, newMenu];
       return { ...state, menus: newMenuList };
     }
     case EDIT_MENU: {
@@ -64,6 +73,15 @@ export default function reducer(state: Tstate, action: TmenuAction) {
     }
     case REMOVE_MENU: {
       const newMenuList = menus.filter(menu => menu.id !== menuId);
+      return { ...state, menus: newMenuList };
+    }
+    case SOLD_OUT_MENU: {
+      const newMenuList = menus.map(menu => {
+        if (menu.id === menuId) {
+          menu.inStock = false;
+        }
+        return menu;
+      });
       return { ...state, menus: newMenuList };
     }
     case SET_CURRENT_TAB: {

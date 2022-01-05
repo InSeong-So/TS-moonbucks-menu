@@ -23,6 +23,7 @@ export type Tmenu = {
   id: string;
   categoryId: string;
   menuName: string;
+  inStock: boolean;
 };
 
 export type Tcategory = {

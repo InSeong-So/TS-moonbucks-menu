@@ -5,6 +5,7 @@ import {
   createMenuItem,
   editMenuItem,
   removeMenuItem,
+  soldOutMenuItem,
   setCurrentTab,
 } from '../store/menu.js';
 import { Tcategory } from '../types/store';
@@ -38,6 +39,8 @@ menuList.addEventListener('click', (e: Event) => {
     editMenu(targetNodeId);
   } else if (target.matches('.menu-remove-button')) {
     removeMenu(targetNodeId);
+  } else if (target.matches('.menu-soldout-button')) {
+    soldOutMenu(targetNodeId);
   }
 });
 
@@ -59,4 +62,9 @@ const editMenu = (menuId: string) => {
 const removeMenu = (menuId: string) => {
   if (!confirm('메뉴를 삭제하시겠습니까?')) return;
   store.dispatch(removeMenuItem(menuId));
+};
+
+const soldOutMenu = (menuId: string) => {
+  if (!confirm('메뉴를 품절 처리하시겠습니까?')) return;
+  store.dispatch(soldOutMenuItem(menuId));
 };
