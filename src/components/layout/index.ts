@@ -19,7 +19,7 @@ const render = (selector: string) => {
     <main class="mt-10 d-flex justify-center">
      <div class="wrapper bg-white p-10">
           ${MenuFormComponent}
-          <ul id="${state.currentTab.id}-menu-list" class="mt-3 pl-0">
+          <ul id="espresso-menu-list" class="mt-3 pl-0">
             ${MenuItemComponent}
           </ul>
         </div>

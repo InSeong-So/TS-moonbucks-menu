@@ -1,7 +1,7 @@
 import { Treducer, TmenuAction, Tlistener, Tstate } from '../types/store.js';
 
 export function createStore(reducer: Treducer) {
-  let state: Tstate = {
+  const initialState: Tstate = {
     menus: [],
     currentTab: { id: 'espresso', name: '☕ 에스프레소' },
     categories: [
@@ -16,11 +16,18 @@ export function createStore(reducer: Treducer) {
   const listeners: Tlistener[] = [];
 
   const getState = () => {
-    return { ...state };
+    return JSON.parse(localStorage.getItem('state') || '{}');
   };
 
   const dispatch = (action: TmenuAction) => {
-    state = reducer(state, action);
+    const storageState = JSON.parse(localStorage.getItem('state') || '{}');
+
+    if (!storageState) {
+      localStorage.setItem('state', JSON.stringify(initialState));
+    } else {
+      const newState = reducer(storageState, action);
+      localStorage.setItem('state', JSON.stringify(newState));
+    }
     publish();
   };
 
@@ -28,7 +35,6 @@ export function createStore(reducer: Treducer) {
     listeners.push(callback);
   };
   const publish = () => {
-    console.log('리스너 발행합니다>>', listeners);
     listeners.forEach((callback: Tlistener) => callback());
   };
 
