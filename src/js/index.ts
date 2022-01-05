@@ -34,11 +34,10 @@ menuForm.addEventListener('submit', (e: Event) => {
 menuList.addEventListener('click', (e: Event) => {
   const target = e.target as HTMLElement;
   const targetNodeId = (target.parentElement as HTMLElement).id;
-  const targetNodeIndex = targetNodeId.split('-')[3];
   if (target.matches('.menu-edit-button')) {
-    editMenu(parseInt(targetNodeIndex));
+    editMenu(targetNodeId);
   } else if (target.matches('.menu-remove-button')) {
-    removeMenu(parseInt(targetNodeIndex));
+    removeMenu(targetNodeId);
   }
 });
 
@@ -51,13 +50,13 @@ const createMenu = (category: Tcategory, menuName: string) => {
   store.dispatch(createMenuItem(category.id, menuName));
 };
 
-const editMenu = (menuId: number) => {
+const editMenu = (menuId: string) => {
   const newMenuName = prompt('수정할 메뉴명을 입력하세요.')?.trim();
   if (!newMenuName) return;
   store.dispatch(editMenuItem(menuId, newMenuName));
 };
 
-const removeMenu = (menuId: number) => {
+const removeMenu = (menuId: string) => {
   if (!confirm('메뉴를 삭제하시겠습니까?')) return;
   store.dispatch(removeMenuItem(menuId));
 };

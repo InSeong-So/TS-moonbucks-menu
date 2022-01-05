@@ -14,8 +14,8 @@ const MenuItem = ({ state }: Tprops) => {
 const render = (menus: Tmenu[]) => {
   return menus
     .map(
-      (menu, index) =>
-        `<li id="espresso-menu-id-${index}" class="menu-list-item d-flex items-center py-2">
+      menu =>
+        `<li id="${menu.id}" class="menu-list-item d-flex items-center py-2">
   <span id="espresso-menu-name" class="w-100 pl-2 menu-name">${menu.menuName}</span>
   <button
     type="button"

@@ -16,18 +16,18 @@ export const createMenuItem = (categoryId: string, menuName: string) => ({
   },
 });
 
-export const editMenuItem = (menuIdx: number, menuName: string) => ({
+export const editMenuItem = (menuId: string, menuName: string) => ({
   type: EDIT_MENU,
   payload: {
-    menuIdx,
+    menuId,
     menuName,
   },
 });
 
-export const removeMenuItem = (menuIdx: number) => ({
+export const removeMenuItem = (menuId: string) => ({
   type: REMOVE_MENU,
   payload: {
-    menuIdx,
+    menuId,
   },
 });
 
@@ -41,27 +41,35 @@ export const setCurrentTab = (categoryId: string) => ({
 // 리듀서는 새로운 상태를 생성하는 함수.
 export default function reducer(state: Tstate, action: TmenuAction) {
   const { type, payload } = action;
-  const { categoryId = '', menuIdx = 0, menuName = '' } = payload;
+  const { categoryId = '', menuId = '', menuName = '' } = payload;
   const { menus, categories } = state;
 
-  // TODO: 스프레드 사용과 콘캣 사용 통일 필요
   switch (type) {
     case CREATE_MENU: {
-      const newMenuList = [...menus, { categoryId, menuName }];
+      const categoryMenus = menus.filter(menu => {
+        return menu.categoryId === categoryId;
+      });
+      const id = `${categoryId}-menu-id-${categoryMenus.length}`;
+      const newMenuList = [...menus, { id, categoryId, menuName }];
       return { ...state, menus: newMenuList };
     }
     case EDIT_MENU: {
-      const newState = [...menus];
-      console.log('edit newstate', menuIdx, newState[menuIdx]);
-      newState[menuIdx].menuName = menuName;
-      return { ...state, menus: newState };
+      const newMenuList = menus.map(menu => {
+        if (menu.id === menuId) {
+          menu.menuName = menuName;
+        }
+        return menu;
+      });
+      return { ...state, menus: newMenuList };
     }
     case REMOVE_MENU: {
-      const newState = menus.filter(menu => menu !== menus[menuIdx]);
-      return { ...state, menus: newState };
+      const newMenuList = menus.filter(menu => menu.id !== menuId);
+      return { ...state, menus: newMenuList };
     }
     case SET_CURRENT_TAB: {
-      const category = categories.find(category => category.id === categoryId);
+      const category = categories.find(category => {
+        return category.id === categoryId;
+      });
       return { ...state, currentTab: category };
     }
     default:

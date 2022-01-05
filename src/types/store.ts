@@ -14,12 +14,13 @@ export type TmenuAction = {
   type: string;
   payload: {
     categoryId?: string;
-    menuIdx?: number;
+    menuId?: string;
     menuName?: string;
   };
 };
 
 export type Tmenu = {
+  id: string;
   categoryId: string;
   menuName: string;
 };
