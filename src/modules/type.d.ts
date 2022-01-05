@@ -3,6 +3,11 @@ import { Coffee } from './constants';
 
 export type CoffeeKeys = keyof typeof Coffee;
 
+export type MenuItemFormServer = {
+  id: string;
+  name: string;
+  isSoldOut: boolean;
+};
 export type MenuItem = {
   id: string;
   text: string;

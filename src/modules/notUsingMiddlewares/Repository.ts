@@ -1,4 +1,10 @@
-import { Actions, CoffeeKeys, DefaultState, MenuItem } from '../type';
+import {
+  Actions,
+  CoffeeKeys,
+  DefaultState,
+  MenuItem,
+  MenuItemFormServer,
+} from '../type';
 import { ReturnCreateStore } from '../../core/myRedux';
 import {
   addMenu,
@@ -8,17 +14,31 @@ import {
   soldOutMenu,
 } from '../actions';
 import { Coffee } from '../constants';
+import { menuClient } from '../../networks/httpClient';
+
+const adjustMenuItem = (menuItem: MenuItemFormServer): MenuItem => ({
+  ...menuItem,
+  text: menuItem.name,
+});
 
 export interface CurrentMenuRepository {
-  add: (newMenu: MenuItem) => void;
-  edit: (newMenu: MenuItem) => void;
+  add: (text: string, category: string) => void;
+  edit: ({
+    menuId,
+    text,
+    category,
+  }: {
+    menuId: string;
+    text: string;
+    category: string;
+  }) => void;
   getList: () => Array<MenuItem>;
   findById: (id: string | undefined) => MenuItem | undefined;
   findByText: (text: string) => MenuItem | undefined;
   changeTab: (selectedTab: CoffeeKeys) => void;
-  toggleSoldOut: (menuId: string) => void;
-  remove: (menuId: string) => void;
-  currentKoreanTab: () => string;
+  toggleSoldOut: (menuId: string, category: string) => void;
+  remove: (menuId: string, category: string) => void;
+  currentTab: () => { koreanName: string; key: string };
 }
 
 export const createCurrentMenuRepository = (() => {
@@ -28,14 +48,13 @@ export const createCurrentMenuRepository = (() => {
   ): CurrentMenuRepository => {
     const { dispatch, getState } = store;
     return {
-      currentKoreanTab: () => {
+      currentTab: () => {
         const currentState = getState();
-        return Coffee[currentState.currentTab].koreanName;
+        return Coffee[currentState.currentTab];
       },
       getList: () => {
         const currentState = getState();
-        const res = currentState.menus[currentState.currentTab];
-        return res;
+        return currentState.menus[currentState.currentTab];
       },
       findById: (id: string | undefined) => {
         return createCurrentMenuRepository(store, db)
@@ -55,17 +74,22 @@ export const createCurrentMenuRepository = (() => {
         dispatch(changeTab(selectedTab));
       },
       toggleSoldOut: (menuId: string) => {
+        // http.client
         dispatch(soldOutMenu(menuId));
       },
-      edit: (newMenu: MenuItem) => {
+      edit: async ({ menuId, text, category }) => {
+        // http.client put
+        const newMenu = await menuClient.editText({ menuId, text, category });
         dispatch(
           editMenu({
-            ...newMenu,
+            ...adjustMenuItem(newMenu),
           }),
         );
       },
-      add: (newMenu: MenuItem) => {
-        dispatch(addMenu(newMenu));
+      add: async (text, category) => {
+        const menuItem = await menuClient.add(text, category);
+        console.log(menuItem);
+        dispatch(addMenu(adjustMenuItem(menuItem)));
       },
     };
   };

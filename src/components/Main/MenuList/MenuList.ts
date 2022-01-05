@@ -2,14 +2,10 @@ import Component from '../../../core/Component';
 import { CurrentMenuService } from '../../../modules/notUsingMiddlewares/services';
 import { MenuItem } from './MenuItem';
 import { EVENTS, MESSAGES, SELECTORS } from '../../../constants';
-import { CurrentMenuRepository } from '../../../modules/notUsingMiddlewares/Repository';
 
 export default class MenuList extends Component {
   get service() {
     return this?.props?.currentMenuService as CurrentMenuService;
-  }
-  get repository() {
-    return this?.props?.currentMenuRepo as CurrentMenuRepository;
   }
   get menuList() {
     return this.service.getList();

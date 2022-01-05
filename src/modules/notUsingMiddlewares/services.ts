@@ -1,11 +1,10 @@
 // 추후 서비스 고도화하기
 import { CoffeeKeys, MenuItem } from '../type';
-import { getUUID } from '../../utils/util';
 import { CurrentMenuRepository } from './Repository';
 import { MESSAGES } from '../../constants';
 export interface CurrentMenuService {
   getList: () => MenuItem[];
-  currentTab: () => string;
+  currentTab: () => { koreanName: string; key: string };
   changeTab: (selectedTab: CoffeeKeys) => void;
   remove: (menuId: string | undefined) => void;
   toggleSoldOut: (menuId: string | undefined) => void;
@@ -16,12 +15,12 @@ export const createCurrentMenuService = (() => {
   console.log('클로져!!');
   return (currentMenuRepo: CurrentMenuRepository) => ({
     getList: currentMenuRepo.getList,
-    currentTab: currentMenuRepo.currentKoreanTab,
+    currentTab: currentMenuRepo.currentTab,
 
     changeTab: (selectedTab: CoffeeKeys) => {
       currentMenuRepo.changeTab(selectedTab);
     },
-    toggleSoldOut: (menuId: string | undefined) => {
+    toggleSoldOut: async (menuId: string | undefined) => {
       if (menuId === undefined) {
         return;
       }
@@ -29,10 +28,11 @@ export const createCurrentMenuService = (() => {
         alert('수정할 수 없는 메뉴입니다.');
         return;
       }
-      currentMenuRepo.toggleSoldOut(menuId);
+      const category = currentMenuRepo.currentTab().key;
+      currentMenuRepo.toggleSoldOut(menuId, category);
     },
     // 시도1 컴포넌트에서 ui 조작까지 다 도맡아 하기
-    remove: (menuId: string | undefined) => {
+    remove: async (menuId: string | undefined) => {
       // validate
       if (menuId === undefined) {
         return;
@@ -41,10 +41,11 @@ export const createCurrentMenuService = (() => {
         alert('삭제할 수 없는 메뉴입니다.');
         return;
       }
-      currentMenuRepo.remove(menuId);
+      const category = currentMenuRepo.currentTab().key;
+      currentMenuRepo.remove(menuId, category);
     },
     // 시도2 service에서 ui 조작까지 다 도맡아 하기
-    edit: (menuId: string | undefined) => {
+    edit: async (menuId: string | undefined) => {
       const menu = currentMenuRepo.findById(menuId);
       if (!menu) {
         alert('수정할 수 없는 메뉴입니다.');
@@ -61,9 +62,10 @@ export const createCurrentMenuService = (() => {
         // 원본과 똑같으므로 바꾸지 않는다. 추후 기존과 동일한 정보로 수정할 수 없다는 ui 추가예정
         return;
       }
-      currentMenuRepo.edit({ ...menu, text: newName });
+      const category = currentMenuRepo.currentTab().key;
+      currentMenuRepo.edit({ menuId: menu.id, text: newName, category });
     },
-    add: (text: string) => {
+    add: async (text: string) => {
       // validate
       if (text === '') {
         return;
@@ -72,13 +74,9 @@ export const createCurrentMenuService = (() => {
         alert('이미 존재하고 있는 음료입니다.');
         return;
       }
-      const newId = getUUID();
-      const newMenu: MenuItem = {
-        id: newId,
-        text,
-        isSoldOut: false,
-      };
-      currentMenuRepo.add(newMenu);
+
+      const category = currentMenuRepo.currentTab().key;
+      await currentMenuRepo.add(text, category);
     },
   });
 })();
