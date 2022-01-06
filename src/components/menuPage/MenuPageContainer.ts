@@ -1,35 +1,28 @@
+import { TMouseEvent } from 'DOMEvent';
+import { IStore } from 'Store';
+import { createUUID } from '~/src/helpers/common';
 import MenuPage from './MenuPage';
 
-const MenuPageContainer = () => {
-  const buttonClick = (event: any) => {
-    if (!event.target.matches('.input-submit')) return;
+const MenuPageContainer = (store: IStore) => {
+  const { id, text } = store.read('current');
+  const menuListId = `${id}-menuList`;
+  const buttonClick = ({ target }: TMouseEvent) => {
+    if (!target.matches('.input-submit')) return;
 
     const $input = document.querySelector('.input-field') as HTMLInputElement;
-    const $li = document.createElement('li');
-    $li.setAttribute('class', 'menu-list-item d-flex items-center py-2');
-    $li.innerHTML = `
-    <span class="w-100 pl-2 menu-name">${$input.value}</span>
-    <button
-      type="button"
-      class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
-    >
-      수정
-    </button>
-    <button
-      type="button"
-      class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
-    >
-      삭제
-    </button>
-    `;
-    const $ul = document.querySelector('ul');
-    $ul?.insertBefore($li, $ul.firstChild);
+    if ($input.value.trim() === '') return;
+
+    const menuList = store.read(menuListId);
+    menuList.push({ menuId: createUUID(), name: $input.value, isSoldOut: false });
+    store.create(menuListId, menuList);
+
     $input.value = '';
   };
 
-  const component = MenuPage();
-
-  return { component, events: [{ type: 'click', cb: buttonClick }] };
+  return {
+    component: MenuPage({ menuList: store.read(menuListId), id, text }),
+    events: [{ type: 'click', cb: buttonClick }],
+  };
 };
 
 export default MenuPageContainer;
