@@ -1,49 +1,56 @@
 /**
- *
- * @param target1
- * @param target2
- * @returns
- */
-export const getMaxLength = (target1 = 0, target2 = 1) => {
-  return Math.max(target1, target2);
-};
-
-/**
- *
+ * 문자열을 각 케이스로 변경합니다.
  */
 export const notationConvert = {
+  /**
+   * 대시 케이스를 카멜 케이스로 변경합니다.
+   *
+   * @param target
+   * @returns
+   */
   dashToCamel: (target: string) => {
     return target.replace(/-[a-z]{1}/gi, char => {
       return char.toUpperCase().substr(1);
     });
   },
+  /**
+   * 스네이크 케이스를 카멜 케이스로 변경합니다.
+   *
+   * @param target
+   * @returns
+   */
   snakeToCamel: (target: string) => {
     return target.replace(/_[a-z]{1}/gi, char => {
       return char.toUpperCase().substr(1);
     });
   },
+  /**
+   * 카멜 케이스를 스네이크 케이스로 변경합니다.
+   *
+   * @param target
+   * @returns
+   */
   camelToSnake: (target: string) => {
     return target.replace(/([A-Z]{1})/g, '_$1').toLowerCase();
   },
 };
 
 /**
+ * 객체를 깊은 복사합니다.
  *
  * @param state
  * @returns
  */
-export const deepCloneToJSON = (state: object) => {
-  return JSON.parse(JSON.stringify(state));
-};
+export const deepClone = (state: object) => JSON.parse(JSON.stringify(state));
 
 /**
+ * 객체를 깊은 복사 후 동결시킵니다.
  *
  * @param state
  * @returns
  */
-export const deepCloneAndFreeze = (state: object) => {
-  return Object.freeze(JSON.parse(JSON.stringify(state)));
-};
+export const deepCloneAndFreeze = (state: object) =>
+  Object.freeze(JSON.parse(JSON.stringify(state)));
 
 /**
  *
@@ -65,6 +72,7 @@ export const debounceV1 = (callback: (...args: any) => void) => {
 };
 
 /**
+ * 디바운스를 설정합니다.
  *
  * @param callback
  * @param wait
@@ -94,6 +102,7 @@ export const debounce = (callback: any, wait = 0) => {
 };
 
 /**
+ * UUID를 생성합니다.
  *
  * @returns
  */
@@ -107,6 +116,7 @@ export const createUUID = () => {
 };
 
 /**
+ * 값이 null이나 undefined인지 검사합니다.
  *
  * @param value
  * @returns
@@ -129,99 +139,38 @@ export const isEmpty = (
 };
 
 /**
- *
- * @param value
- * @param start
- * @param end
- * @returns
- */
-export const isBetween = (value: number | string, start: number | string, end: number | string) => {
-  const parsed = +value;
-  if (Number.isNaN(parsed)) return false;
-  return start <= parsed && parsed <= end;
-};
-
-/**
+ * 값이 일치(===)하는지 검사합니다.
  *
  * @param target1
  * @param target2
  * @returns
  */
-export const isEquals = <T>(target1: T, target2: T) => {
-  return target1 === target2;
-};
+export const isEquals = <T>(target1: T, target2: T) => target1 === target2;
 
 /**
  * 배열에 값이 포함 되어 있는지 검사합니다.
  *
- * @param {number|string} value
- * @param {any[]} items
- * @returns {boolean}
+ * @param value
+ * @param items
+ * @returns
  */
 export const isIncludes = (value: undefined, items: undefined[]) => items.includes(value);
 
 /**
  * 중복 여부를 검사합니다.
  *
- * @param {string} value
- * @param {any[]} items
- * @returns {boolean}
+ * @param value
+ * @param items
+ * @returns
  */
 export const isDuplicate = (value: any, items: any[]) =>
   !isNull(items.find(({ name }) => name === value));
 
 /**
+ * @TODO 고도화 필요, 함수형 프로그래밍 철학 적용하기
  *
- * @param object1
- * @param object2
+ * @param array
+ * @param args
  * @returns
  */
-export const isEqualsObject = (object1: object | (() => void), object2: object | (() => void)) => {
-  if (typeof object1 === 'function' || typeof object2 === 'function')
-    return object1.toString() === object2.toString();
-  return JSON.stringify(object1) === JSON.stringify(object2);
-};
-
-/**
- *
- * @param target
- * @param type
- * @returns
- */
-export const isCorrectType = (target: any, type: string) => {
-  return typeof target === type;
-};
-
-/**
- *
- * @param node1
- * @param node2
- * @returns
- */
-export const isNodeNotEquals = (node1: HTMLElement, node2: HTMLElement) => {
-  return !node1.isEqualNode(node2);
-};
-
-/**
- *
- * @param node1
- * @param node2
- * @returns
- */
-export const isOnlyExistLeft = <T>(node1: T, node2: T) => {
-  return node1 && !node2;
-};
-
-/**
- *
- * @param node1
- * @param node2
- * @returns
- */
-export const isOnlyExistRight = <T>(node1: T, node2: T) => {
-  return !node1 && node2;
-};
-
-export const last = (array: any[], ...args: any[]) => {
-  return array[array.length - 1][args[0]];
-};
+export const last = (array: any[], ...args: any[]) => array[array.length - 1][args[0]];
