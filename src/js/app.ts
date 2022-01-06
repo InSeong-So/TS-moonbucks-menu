@@ -79,78 +79,50 @@ export default class App {
   render(elementId: string): void {
     // state에 맞춰서 html 변경
     if (elementId === '#espresso-menu-list') {
-      let html = '';
-      this.state.menuNames.forEach((value, index) => {
-        html += `
+      $(elementId).innerHTML = this.state.menuNames
+        .map((value, index) => {
+          return `
           <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
             <span class="w-100 pl-2 menu-name">${value}</span>
             <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button">수정</button>
             <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-delete-button">삭제</button>
-          </li>`;
-      });
-      $(elementId).innerHTML = html;
+          </li>
+          `;
+        })
+        .join('');
     } else if (elementId === '.menu-count') {
       $(elementId).innerHTML = `총 ${this.state.menuNames.length}개`;
     }
   }
 
   bindEvent(): void {
-    $('main').addEventListener(
-      'click',
-      e => {
-        const $target = e.target as HTMLElement;
-        if (!$target) {
-          return;
-        }
+    $('main').addEventListener('click', e => {
+      const $target = e.target as HTMLElement;
+      if (!$target) return;
 
-        if ($target.id && $target.id === 'espresso-menu-submit-button') {
-          this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
-          this.render('#espresso-menu-list');
-          this.render('.menu-count');
-          e.preventDefault();
-        } else if ($target.classList.contains('menu-edit-button')) {
-          const $item = $target.closest('.menu-list-item') as HTMLInputElement;
-          const index = Number($item.getAttribute('data-menu-id'));
-          const changeValue = prompt('메뉴명을 수정하세요')?.trim();
+      if ($target.id === 'espresso-menu-submit-button') {
+        this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
+      } else if ($target.classList.contains('menu-edit-button')) {
+        this.editMenuName(
+          $target.closest('.menu-list-item') as HTMLInputElement,
+        );
+      } else if ($target.classList.contains('menu-delete-button')) {
+        this.deleteMenuName(
+          $target.closest('.menu-list-item') as HTMLInputElement,
+        );
+      }
 
-          if (changeValue && index >= 0) {
-            this.state.menuNames[index] = changeValue;
-            this.render('#espresso-menu-list');
-          }
-          e.preventDefault();
-        } else if ($target.classList.contains('menu-delete-button')) {
-          const $item = $target.closest('.menu-list-item') as HTMLInputElement;
-          const index = Number($item.getAttribute('data-menu-id'));
-          const isDelete = confirm('정말 삭제하시겠습니까?');
+      e.preventDefault();
+    });
 
-          if (isDelete && index >= 0) {
-            this.state.menuNames.splice(index, 1);
-            this.render('#espresso-menu-list');
-            this.render('.menu-count');
-          }
-          e.preventDefault();
-        }
-      },
-      false,
-    );
+    $('main').addEventListener('keydown', e => {
+      const $target = e.target as HTMLElement;
 
-    $('main').addEventListener(
-      'keydown',
-      e => {
-        const $target = e.target as HTMLElement;
-        if (
-          e.key === 'Enter' &&
-          $target.id &&
-          $target.id === 'espresso-menu-name'
-        ) {
-          this.addMenuName($target as HTMLInputElement);
-          this.render('#espresso-menu-list');
-          this.render('.menu-count');
-          e.preventDefault();
-        }
-      },
-      false,
-    );
+      if (e.key === 'Enter' && $target.id === 'espresso-menu-name')
+        this.addMenuName($target as HTMLInputElement);
+
+      e.preventDefault();
+    });
   }
 
   addMenuName($input: HTMLInputElement): void {
@@ -159,5 +131,28 @@ export default class App {
     }
     this.state.menuNames.push($input.value);
     $input.value = '';
+    this.render('#espresso-menu-list');
+    this.render('.menu-count');
+  }
+
+  editMenuName($menuListItem: HTMLInputElement): void {
+    const index = Number($menuListItem.getAttribute('data-menu-id'));
+    const changeValue = prompt('메뉴명을 수정하세요')?.trim();
+
+    if (changeValue && index >= 0) {
+      this.state.menuNames[index] = changeValue;
+      this.render('#espresso-menu-list');
+    }
+  }
+
+  deleteMenuName($menuListItem: HTMLInputElement): void {
+    const index = Number($menuListItem.getAttribute('data-menu-id'));
+    const isDelete = confirm('정말 삭제하시겠습니까?');
+
+    if (isDelete && index >= 0) {
+      this.state.menuNames.splice(index, 1);
+      this.render('#espresso-menu-list');
+      this.render('.menu-count');
+    }
   }
 }
