@@ -1,6 +1,16 @@
 declare module 'DiffRender' {
-  export type TDiffRender = ($old: HTMLElement, $new: HTMLElement) => void | undefined;
+  export type TDiffRender = (
+    $element: HTMLElement,
+    realNode: HTMLElement,
+    virtualNode: HTMLElement,
+  ) => void | undefined;
   export type TNodeCompare = ($oldNode: HTMLElement, $newNode: HTMLElement) => boolean;
+  export type TAttributeCompare = (
+    node1: HTMLElement,
+    node2: HTMLElement,
+    name1: string,
+    name2: string,
+  ) => boolean;
 }
 
 declare module 'DomConverter' {
@@ -21,4 +31,8 @@ declare module 'DomConverter' {
   export type TTextToken = { text: string };
   export type TStringObject = { [key: string]: string };
   export type TValidObject = { [key: string]: boolean };
+}
+
+declare module 'DOMEvent' {
+  export type TMouseEvent = MouseEvent & { target: HTMLButtonElement };
 }
