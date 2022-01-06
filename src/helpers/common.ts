@@ -221,3 +221,7 @@ export const isOnlyExistLeft = <T>(node1: T, node2: T) => {
 export const isOnlyExistRight = <T>(node1: T, node2: T) => {
   return !node1 && node2;
 };
+
+export const last = (array: any[], ...args: any[]) => {
+  return array[array.length - 1][args[0]];
+};

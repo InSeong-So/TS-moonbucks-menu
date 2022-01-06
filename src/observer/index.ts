@@ -1,6 +1,6 @@
 // 현재 아무 역할도 하고 있지 않습니다!
 export default class Observer {
-  subscribers: any[];
+  subscribers: ((...args: any[]) => any)[];
   constructor() {
     this.subscribers = [];
   }

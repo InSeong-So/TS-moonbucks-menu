@@ -1,6 +1,6 @@
+import { TDiffRender, TNodeCompare } from 'DiffRender';
 import {
   getMaxLength,
-  isNull,
   isEmpty,
   isEquals,
   isNodeNotEquals,
@@ -8,39 +8,33 @@ import {
   isOnlyExistRight,
 } from '../common';
 
-type TDiffRender = ($old: HTMLElement, $new: HTMLElement) => void | undefined;
-type TNodeCompare = (node1: HTMLElement, node2: HTMLElement) => boolean;
-
 /**
  *
  * @param $element
  * @param newElement
  */
 const render: TDiffRender = ($old, $new) => {
-  if (isNull($old)) return;
-
-  const realDOM = $old;
+  const realDOM = $old.firstChild as HTMLElement;
   const virtualDOM = $new;
-  // const virtualDOM = realDOM.cloneNode(false) as HTMLElement;
-  // virtualDOM.innerHTML = $new;
 
   const [realChildren, realLength] = getChildren(realDOM);
   const [virtualChildren, virtualLength] = getChildren(virtualDOM);
 
   for (let i = 0; i < getMaxLength(realLength, virtualLength); i++) {
-    renderDOM(realDOM, realChildren[i], virtualChildren[i]);
+    renderDOM($old, realChildren[i], virtualChildren[i]);
   }
 };
 
 const getChildren = (target: HTMLElement): [HTMLElement[], number] => {
+  if (!target) return [[], 0];
   const targetChildrens = Array.from(target.children) as HTMLElement[];
   return [targetChildrens, targetChildrens.length];
 };
 
-const isChangedNode: TNodeCompare = (node1, node2) => {
-  if (isNodeNotEquals(node1, node2)) return true;
-  if (isDifferenceAttributes(node1, node2)) return true;
-  if (isNotEqualsLastContent(node1, node2)) return true;
+const isChangedNode: TNodeCompare = ($oldNode, $newNode) => {
+  if (isNodeNotEquals($oldNode, $newNode)) return true;
+  if (isDifferenceAttributes($oldNode, $newNode)) return true;
+  if (isNotEqualsLastContent($oldNode, $newNode)) return true;
   return false;
 };
 
