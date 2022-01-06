@@ -100,45 +100,28 @@ export default class App {
       const $target = e.target as HTMLElement;
       if (!$target) return;
 
-      if ($target.id && $target.id === 'espresso-menu-submit-button') {
+      if ($target.id === 'espresso-menu-submit-button') {
         this.addMenuName($('#espresso-menu-name') as HTMLInputElement);
-        this.render('#espresso-menu-list');
-        this.render('.menu-count');
       } else if ($target.classList.contains('menu-edit-button')) {
-        const $item = $target.closest('.menu-list-item') as HTMLInputElement;
-        const index = Number($item.getAttribute('data-menu-id'));
-        const changeValue = prompt('메뉴명을 수정하세요')?.trim();
-
-        if (changeValue && index >= 0) {
-          this.state.menuNames[index] = changeValue;
-          this.render('#espresso-menu-list');
-        }
+        this.editMenuName(
+          $target.closest('.menu-list-item') as HTMLInputElement,
+        );
       } else if ($target.classList.contains('menu-delete-button')) {
-        const $item = $target.closest('.menu-list-item') as HTMLInputElement;
-        const index = Number($item.getAttribute('data-menu-id'));
-        const isDelete = confirm('정말 삭제하시겠습니까?');
-
-        if (isDelete && index >= 0) {
-          this.state.menuNames.splice(index, 1);
-          this.render('#espresso-menu-list');
-          this.render('.menu-count');
-        }
+        this.deleteMenuName(
+          $target.closest('.menu-list-item') as HTMLInputElement,
+        );
       }
+
       e.preventDefault();
     });
 
     $('main').addEventListener('keydown', e => {
       const $target = e.target as HTMLElement;
-      if (
-        e.key === 'Enter' &&
-        $target.id &&
-        $target.id === 'espresso-menu-name'
-      ) {
+
+      if (e.key === 'Enter' && $target.id === 'espresso-menu-name')
         this.addMenuName($target as HTMLInputElement);
-        this.render('#espresso-menu-list');
-        this.render('.menu-count');
-        e.preventDefault();
-      }
+
+      e.preventDefault();
     });
   }
 
@@ -148,5 +131,28 @@ export default class App {
     }
     this.state.menuNames.push($input.value);
     $input.value = '';
+    this.render('#espresso-menu-list');
+    this.render('.menu-count');
+  }
+
+  editMenuName($menuListItem: HTMLInputElement): void {
+    const index = Number($menuListItem.getAttribute('data-menu-id'));
+    const changeValue = prompt('메뉴명을 수정하세요')?.trim();
+
+    if (changeValue && index >= 0) {
+      this.state.menuNames[index] = changeValue;
+      this.render('#espresso-menu-list');
+    }
+  }
+
+  deleteMenuName($menuListItem: HTMLInputElement): void {
+    const index = Number($menuListItem.getAttribute('data-menu-id'));
+    const isDelete = confirm('정말 삭제하시겠습니까?');
+
+    if (isDelete && index >= 0) {
+      this.state.menuNames.splice(index, 1);
+      this.render('#espresso-menu-list');
+      this.render('.menu-count');
+    }
   }
 }
