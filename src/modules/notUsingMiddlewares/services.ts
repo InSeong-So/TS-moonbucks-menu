@@ -13,7 +13,7 @@ export interface CurrentMenuService {
 }
 export const createCurrentMenuService = (() => {
   console.log('클로져!!');
-  return (currentMenuRepo: CurrentMenuRepository) => ({
+  return (currentMenuRepo: CurrentMenuRepository): CurrentMenuService => ({
     getList: currentMenuRepo.getList,
     currentTab: currentMenuRepo.currentTab,
 
@@ -65,6 +65,7 @@ export const createCurrentMenuService = (() => {
       const category = currentMenuRepo.currentTab().key;
       currentMenuRepo.edit({ menuId: menu.id, text: newName, category });
     },
+    // 에러, validate, ui 컨트롤 영역
     add: async (text: string) => {
       // validate
       if (text === '') {
@@ -76,7 +77,11 @@ export const createCurrentMenuService = (() => {
       }
 
       const category = currentMenuRepo.currentTab().key;
-      await currentMenuRepo.add(text, category);
+      try {
+        await currentMenuRepo.add(text, category);
+      } catch (e: any) {
+        alert(e?.message);
+      }
     },
   });
 })();
