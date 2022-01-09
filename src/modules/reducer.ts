@@ -6,6 +6,8 @@ export default function reducer(
   action: Actions,
 ): DefaultState {
   switch (action.type) {
+    // case 'FETCH_MENU_LIST_ALL': {
+    // }
     case 'CHANGE_TAB': {
       return {
         ...state,

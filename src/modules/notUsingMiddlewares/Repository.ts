@@ -32,12 +32,14 @@ export interface CurrentMenuRepository {
     text: string;
     category: string;
   }) => void;
+  toggleSoldOut: (menuId: string, category: string) => void;
+  remove: (menuId: string, category: string) => void;
+  fetchAll: () => void;
+  // cache data
   getList: () => Array<MenuItem>;
   findById: (id: string | undefined) => MenuItem | undefined;
   findByText: (text: string) => MenuItem | undefined;
   changeTab: (selectedTab: CoffeeKeys) => void;
-  toggleSoldOut: (menuId: string, category: string) => void;
-  remove: (menuId: string, category: string) => void;
   currentTab: () => { koreanName: string; key: string };
 }
 
@@ -68,30 +70,36 @@ export const createCurrentMenuRepository = (() => {
             .getList()
             .find(coffee => coffee.text === text);
         },
-        remove: (menuId: string) => {
+        remove: async (menuId: string, category: string) => {
           // db action, state action
+          await menuClient.remove({ menuId, category });
+
           dispatch(removeMenu(menuId));
         },
         changeTab: (selectedTab: CoffeeKeys) => {
           dispatch(changeTab(selectedTab));
         },
-        toggleSoldOut: (menuId: string) => {
+        toggleSoldOut: async (menuId: string, category: string) => {
           // http.client
+          const a = await menuClient.toggleSoldOut({ menuId, category }); // 서버를 믿는다...?
+          console.log(a);
           dispatch(soldOutMenu(menuId));
         },
         edit: async ({ menuId, text, category }) => {
           // http.client put
           const newMenu = await menuClient.editText({ menuId, text, category });
-          console.log(newMenu);
           dispatch(
             editMenu({
               ...adjustMenuItem(newMenu),
             }),
           );
         },
+        fetchAll: async () => {
+          const res = await menuClient.fetchAll();
+          console.log(res);
+        },
         add: async (text, category) => {
           const menuItem = await menuClient.add(text, category);
-
           dispatch(addMenu(adjustMenuItem(menuItem)));
         },
       };
