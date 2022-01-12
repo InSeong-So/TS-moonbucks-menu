@@ -41,12 +41,13 @@ const render = (menus: Tmenu[]) => {
   >
     품절
   </button>
-</li>`
+</li>`,
     )
     .join('');
 };
 
 const updateMenuList = () => {
+  // TODO: 전역 데이터(외부파일)를 참조하지 않도록  유지보수하기 좋은 코드를 만들기.
   const { menus, currentTab } = store.getState();
 
   const categoryMenus = getCategoryMenus(menus, currentTab);

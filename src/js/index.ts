@@ -12,7 +12,6 @@ import { Tcategory } from '../types/store';
 
 renderDefaultLayouts('#app');
 
-// TODO: 타입 단언문을 선언문으로 변경
 const menuForm = $('#espresso-menu-form');
 const menuInput = $('#espresso-menu-name') as HTMLInputElement;
 const menuList = $('#espresso-menu-list');

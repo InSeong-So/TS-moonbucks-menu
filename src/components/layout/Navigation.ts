@@ -13,7 +13,7 @@ const Navigation = ({ state }: Tprops) => {
 const render = (categories: Tcategory[], currentTab: Tcategory) => {
   return categories
     .map(
-      (category) =>
+      category =>
         `<button
       data-category-name="${category.id}"
       class="cafe-category-name btn shadow mx-1 ${
@@ -21,7 +21,7 @@ const render = (categories: Tcategory[], currentTab: Tcategory) => {
       }"
     >
       ${category.name}
-    </button>`
+    </button>`,
     )
     .join('');
 };

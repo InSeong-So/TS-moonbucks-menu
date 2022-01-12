@@ -1,4 +1,4 @@
-import { TmenuAction } from '../types/store.js';
+import { Tcategory, TmenuAction } from '../types/store.js';
 import { Tstate } from '../types/store.js';
 
 /* 액션 타입 정의 */
@@ -57,6 +57,7 @@ export default function reducer(state: Tstate, action: TmenuAction) {
       const categoryMenus = menus.filter(menu => {
         return menu.categoryId === categoryId;
       });
+      // TODO: 중복 가능성 의심, UUID 적용
       const id = `${categoryId}-menu-id-${categoryMenus.length}`;
       const newMenu = { id, categoryId, menuName, inStock: true };
       const newMenuList = [...menus, newMenu];
@@ -85,9 +86,10 @@ export default function reducer(state: Tstate, action: TmenuAction) {
       return { ...state, menus: newMenuList };
     }
     case SET_CURRENT_TAB: {
+      // TODO: 에러처리 및  undefiend 체크하는 공통함수 구현
       const category = categories.find(category => {
         return category.id === categoryId;
-      });
+      }) as Tcategory;
       return { ...state, currentTab: category };
     }
     default:
