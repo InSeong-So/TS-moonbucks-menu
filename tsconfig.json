@@ -25,12 +25,13 @@
     // 타입이 정해져있지 않은 코드를 any라도 지정해야한다고 제한
     "noImplicitAny": true,
     "baseUrl": ".",
+    "types": ["node"],
     "paths": {
       "~/*": [
         "*"
       ],
       "@/*": [
-        "src/packages/*"
+        "src/*"
       ],
     },
     "typeRoots": [
