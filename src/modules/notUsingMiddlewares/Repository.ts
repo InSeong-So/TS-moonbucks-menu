@@ -14,7 +14,7 @@ import {
   soldOutMenu,
 } from '../actions';
 import { Coffee } from '../constants';
-import { menuClient } from '../../networks/httpClient';
+import { menuClient } from '../../networks/domain/menuClient';
 
 const adjustMenuItem = (menuItem: MenuItemFormServer): MenuItem => ({
   ...menuItem,
@@ -50,60 +50,59 @@ export const createCurrentMenuRepository = (() => {
     db: any,
   ): CurrentMenuRepository => {
     const { dispatch, getState } = store;
-    if (!repository) {
-      repository = {
-        currentTab: () => {
-          const currentState = getState();
-          return Coffee[currentState.currentTab];
-        },
-        getList: () => {
-          const currentState = getState();
-          return currentState.menus[currentState.currentTab];
-        },
-        findById: (id: string | undefined) => {
-          return createCurrentMenuRepository(store, db)
-            .getList()
-            .find(coffee => coffee.id === id);
-        },
-        findByText: (text: string) => {
-          return createCurrentMenuRepository(store, db)
-            .getList()
-            .find(coffee => coffee.text === text);
-        },
-        remove: async (menuId: string, category: string) => {
-          // db action, state action
-          await menuClient.remove({ menuId, category });
-
-          dispatch(removeMenu(menuId));
-        },
-        changeTab: (selectedTab: CoffeeKeys) => {
-          dispatch(changeTab(selectedTab));
-        },
-        toggleSoldOut: async (menuId: string, category: string) => {
-          // http.client
-          const a = await menuClient.toggleSoldOut({ menuId, category }); // 서버를 믿는다...?
-          console.log(a);
-          dispatch(soldOutMenu(menuId));
-        },
-        edit: async ({ menuId, text, category }) => {
-          // http.client put
-          const newMenu = await menuClient.editText({ menuId, text, category });
-          dispatch(
-            editMenu({
-              ...adjustMenuItem(newMenu),
-            }),
-          );
-        },
-        fetchAll: async () => {
-          const res = await menuClient.fetchAll();
-          console.log(res);
-        },
-        add: async (text, category) => {
-          const menuItem = await menuClient.add(text, category);
-          dispatch(addMenu(adjustMenuItem(menuItem)));
-        },
-      };
+    if (repository) {
+      return repository;
     }
+    repository = {
+      currentTab: () => {
+        const currentState = getState();
+        return Coffee[currentState.currentTab];
+      },
+      getList: () => {
+        const currentState = getState();
+        return currentState.menus[currentState.currentTab];
+      },
+      findById: (id: string | undefined) => {
+        return createCurrentMenuRepository(store, db)
+          .getList()
+          .find(coffee => coffee.id === id);
+      },
+      findByText: (text: string) => {
+        return createCurrentMenuRepository(store, db)
+          .getList()
+          .find(coffee => coffee.text === text);
+      },
+      remove: async (menuId: string, category: string) => {
+        // db action, state action
+        await menuClient.remove({ menuId, category });
+
+        dispatch(removeMenu(menuId));
+      },
+      changeTab: (selectedTab: CoffeeKeys) => {
+        dispatch(changeTab(selectedTab));
+      },
+      toggleSoldOut: async (menuId: string, category: string) => {
+        // http.client
+        await menuClient.toggleSoldOut({ menuId, category }); // 서버를 믿는다...?
+        dispatch(soldOutMenu(menuId));
+      },
+      edit: async ({ menuId, text, category }) => {
+        // http.client put
+        const newMenu = await menuClient.editText({ menuId, text, category });
+        dispatch(
+          editMenu({
+            ...adjustMenuItem(newMenu),
+          }),
+        );
+      },
+      fetchAll: async () => {
+        await menuClient.fetchAll();
+      },
+      add: async (text, category) => {
+        const menuItem = await menuClient.add(text, category);
+        dispatch(addMenu(adjustMenuItem(menuItem)));
+      },
+    };
     return repository;
   };
 })();
