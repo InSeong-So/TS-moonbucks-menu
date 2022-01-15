@@ -21,18 +21,20 @@ export type DefaultState = {
 // type MenuActionKey = 'ADD' | 'NAME_EDIT' | 'REMOVE' | 'SOLD_OUT';
 // type TabActionKey = 'CHANGE_TAB';
 
+export type FetchMenusByCategoryAction = Action<
+  'FETCH_MENUS_BY_CATEGORY',
+  { category: CoffeeKeys; menus: MenuItem[] }
+>;
 export type MenuAddAction = Action<'ADD', { menu: MenuItem }>;
 export type MenuEditAction = Action<'NAME_EDIT', { menu: MenuItem }>;
 export type MenuRemoveAction = Action<'REMOVE', { id: string }>;
 export type MenuSoldOutAction = Action<'SOLD_OUT', { id: string }>;
-export type TabChangeAction = Action<
-  'CHANGE_TAB',
-  { tabKey: keyof typeof Coffee }
->;
+export type TabChangeAction = Action<'CHANGE_TAB', { tabKey: CoffeeKeys }>;
 
 export type Actions =
   | MenuAddAction
   | MenuEditAction
   | MenuRemoveAction
   | MenuSoldOutAction
-  | TabChangeAction;
+  | TabChangeAction
+  | FetchMenusByCategoryAction;

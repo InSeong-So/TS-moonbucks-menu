@@ -21,9 +21,8 @@ export default class App extends Component {
   }
   mount() {
     const service = createCurrentMenuService(
-      createCurrentMenuRepository(this.store, {}),
+      createCurrentMenuRepository(this.store),
     );
-    service.fetchAll();
     new Header({
       key: 'header',
       $parent: this.$component,

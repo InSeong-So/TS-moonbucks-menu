@@ -10,6 +10,7 @@ import {
   addMenu,
   changeTab,
   editMenu,
+  fetchMenus,
   removeMenu,
   soldOutMenu,
 } from '../actions';
@@ -34,20 +35,20 @@ export interface CurrentMenuRepository {
   }) => void;
   toggleSoldOut: (menuId: string, category: string) => void;
   remove: (menuId: string, category: string) => void;
-  fetchAll: () => void;
+  fetchByCategory: (cate: CoffeeKeys) => void;
   // cache data
   getList: () => Array<MenuItem>;
   findById: (id: string | undefined) => MenuItem | undefined;
   findByText: (text: string) => MenuItem | undefined;
   changeTab: (selectedTab: CoffeeKeys) => void;
-  currentTab: () => { koreanName: string; key: string };
+  currentTab: () => { koreanName: string; key: CoffeeKeys };
 }
 
 export const createCurrentMenuRepository = (() => {
   let repository: CurrentMenuRepository;
   return (
     store: ReturnCreateStore<DefaultState, Actions>,
-    db: any,
+    client: typeof menuClient = menuClient,
   ): CurrentMenuRepository => {
     const { dispatch, getState } = store;
     if (repository) {
@@ -62,44 +63,45 @@ export const createCurrentMenuRepository = (() => {
         const currentState = getState();
         return currentState.menus[currentState.currentTab];
       },
-      findById: (id: string | undefined) => {
-        return createCurrentMenuRepository(store, db)
+      findById: id => {
+        return createCurrentMenuRepository(store, client)
           .getList()
           .find(coffee => coffee.id === id);
       },
-      findByText: (text: string) => {
-        return createCurrentMenuRepository(store, db)
+      findByText: text => {
+        return createCurrentMenuRepository(store, client)
           .getList()
           .find(coffee => coffee.text === text);
       },
-      remove: async (menuId: string, category: string) => {
+      remove: async (menuId, category) => {
         // db action, state action
-        await menuClient.remove({ menuId, category });
+        await client.remove({ menuId, category });
 
         dispatch(removeMenu(menuId));
       },
-      changeTab: (selectedTab: CoffeeKeys) => {
+      changeTab: selectedTab => {
         dispatch(changeTab(selectedTab));
       },
-      toggleSoldOut: async (menuId: string, category: string) => {
+      toggleSoldOut: async (menuId, category) => {
         // http.client
-        await menuClient.toggleSoldOut({ menuId, category }); // 서버를 믿는다...?
+        await client.toggleSoldOut({ menuId, category }); // 서버를 믿는다...?
         dispatch(soldOutMenu(menuId));
       },
       edit: async ({ menuId, text, category }) => {
         // http.client put
-        const newMenu = await menuClient.editText({ menuId, text, category });
+        const newMenu = await client.editText({ menuId, text, category });
         dispatch(
           editMenu({
             ...adjustMenuItem(newMenu),
           }),
         );
       },
-      fetchAll: async () => {
-        await menuClient.fetchAll();
+      fetchByCategory: async cate => {
+        const menuList = await client.fetchByCategory(cate);
+        dispatch(fetchMenus(cate, menuList.map(adjustMenuItem)));
       },
       add: async (text, category) => {
-        const menuItem = await menuClient.add(text, category);
+        const menuItem = await client.add(text, category);
         dispatch(addMenu(adjustMenuItem(menuItem)));
       },
     };

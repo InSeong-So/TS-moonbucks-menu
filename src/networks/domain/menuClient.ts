@@ -1,4 +1,3 @@
-import { Coffee } from '../../modules/constants';
 import { MenuItemFormServer } from '../../modules/type';
 import request, { parseResponse, checkProperties } from '../myRequest';
 
@@ -11,31 +10,20 @@ const menuRequest = request({
 });
 
 export const menuClient = {
-  fetchAll: async () => {
-    const promises = await Promise.all(
-      Object.values(Coffee).map(({ key }) => ({
-        key,
-        resolved: menuRequest.get(`/category/${key}/menu`),
-      })),
-    );
-    return await Promise.all(
-      promises.map(async ({ key, resolved }) => {
-        const menuList = await parseResponse<MenuItemFormServer[]>(
-          await resolved,
-        );
-        // validate check
-        menuList.forEach(res =>
-          checkProperties(res, ['id', 'name', 'isSoldOut']),
-        );
-        return { [key]: menuList };
-      }),
-    );
+  fetchByCategory: async (cate: string) => {
+    const response = await menuRequest.get(`/category/${cate}/menu`);
+    const menus = await parseResponse<MenuItemFormServer[]>(response);
+    // validation check
+    // 리턴값이 있는 모든 data 는 checkProperties 있는데.... 중복임
+    menus.forEach(menu => checkProperties(menu, ['id', 'name', 'isSoldOut']));
+    return menus;
   },
   add: async (text: string, category: string): Promise<MenuItemFormServer> => {
     const response = await menuRequest.post(`/category/${category}/menu`, {
       name: text,
     });
     const res = await parseResponse<MenuItemFormServer>(response);
+    // validation check
     checkProperties(res, ['id', 'name', 'isSoldOut']);
     return res;
   },
@@ -56,6 +44,7 @@ export const menuClient = {
       { name: text },
     );
     const res = await parseResponse<MenuItemFormServer>(response);
+    // validation check
     checkProperties(res, ['id', 'name', 'isSoldOut']);
     return res;
   },
@@ -70,6 +59,7 @@ export const menuClient = {
       `/category/${category}/menu/${menuId}/soldout`,
     );
     const res = await parseResponse<MenuItemFormServer>(response);
+    // validation check
     checkProperties(res, ['id', 'name', 'isSoldOut']);
     return res;
   },

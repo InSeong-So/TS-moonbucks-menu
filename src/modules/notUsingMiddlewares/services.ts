@@ -4,14 +4,14 @@ import { CurrentMenuRepository } from './Repository';
 import { MESSAGES } from '../../constants';
 export interface CurrentMenuService {
   getList: () => MenuItem[];
-  currentTab: () => { koreanName: string; key: string };
+  currentTab: () => { koreanName: string; key: CoffeeKeys };
   changeTab: (selectedTab: CoffeeKeys) => void;
 
   remove: (menuId: string | undefined) => void;
   toggleSoldOut: (menuId: string | undefined) => void;
   edit: (menuId: string | undefined) => void;
   add: (text: string) => void;
-  fetchAll: () => void;
+  fetchByCategory: (cate: CoffeeKeys) => void;
 }
 export const createCurrentMenuService = (() => {
   console.log('클로져!!');
@@ -19,10 +19,10 @@ export const createCurrentMenuService = (() => {
     getList: currentMenuRepo.getList,
     currentTab: currentMenuRepo.currentTab,
 
-    changeTab: (selectedTab: CoffeeKeys) => {
+    changeTab: selectedTab => {
       currentMenuRepo.changeTab(selectedTab);
     },
-    toggleSoldOut: async (menuId: string | undefined) => {
+    toggleSoldOut: async menuId => {
       if (menuId === undefined) {
         return;
       }
@@ -39,7 +39,7 @@ export const createCurrentMenuService = (() => {
       }
     },
     // 시도1 컴포넌트에서 ui 조작까지 다 도맡아 하기
-    remove: async (menuId: string | undefined) => {
+    remove: async menuId => {
       // validate
       if (menuId === undefined) {
         return;
@@ -57,7 +57,7 @@ export const createCurrentMenuService = (() => {
       }
     },
     // 시도2 service에서 ui 조작까지 다 도맡아 하기
-    edit: async (menuId: string | undefined) => {
+    edit: async menuId => {
       const menu = currentMenuRepo.findById(menuId);
       if (!menu) {
         alert('수정할 수 없는 메뉴입니다.');
@@ -93,7 +93,7 @@ export const createCurrentMenuService = (() => {
       }
     },
     // 에러, validate, ui 컨트롤 영역
-    add: async (text: string) => {
+    add: async text => {
       // validate
       // 해당 메서드가 validation 과 ui 컨트롤을 하는데, 너무 중구난방의 느낌이 든다.
       if (text === '') {
@@ -111,8 +111,8 @@ export const createCurrentMenuService = (() => {
         alert(e?.message);
       }
     },
-    fetchAll: async () => {
-      await currentMenuRepo.fetchAll();
+    fetchByCategory: async cate => {
+      await currentMenuRepo.fetchByCategory(cate);
     },
   });
 })();
