@@ -1,18 +1,11 @@
-import { $ } from '../utils/domController.js';
-import store from '../store/index.js';
-import { Tprops, Tmenu } from '../types/store.js';
+import { Tstate } from '../types/store.js';
 import { getCategoryMenus } from '../utils/helper.js';
 
-const MenuItem = ({ state }: Tprops) => {
+const MenuItem = (state: Tstate) => {
   const { menus, currentTab } = state;
+  const categoryMenus = getCategoryMenus(menus, currentTab);
 
-  store.subscribe(updateMenuList);
-
-  return render(getCategoryMenus(menus, currentTab));
-};
-
-const render = (menus: Tmenu[]) => {
-  return menus
+  return categoryMenus
     .map(
       menu =>
         `<li id="${menu.id}" class="menu-list-item d-flex items-center py-2">
@@ -44,15 +37,6 @@ const render = (menus: Tmenu[]) => {
 </li>`,
     )
     .join('');
-};
-
-const updateMenuList = () => {
-  // TODO: 전역 데이터(외부파일)를 참조하지 않도록  유지보수하기 좋은 코드를 만들기.
-  const { menus, currentTab } = store.getState();
-
-  const categoryMenus = getCategoryMenus(menus, currentTab);
-
-  $(`#espresso-menu-list`).innerHTML = render(categoryMenus);
 };
 
 export default MenuItem;

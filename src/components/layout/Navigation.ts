@@ -1,16 +1,8 @@
-import { $ } from '../../utils/domController.js';
-import { Tprops, Tcategory } from '../../types/store.js';
-import store from '../../store/index.js';
+import { Tstate } from '../../types/store.js';
 
-const Navigation = ({ state }: Tprops) => {
+const Navigation = (state: Tstate) => {
   const { categories, currentTab } = state;
-  store.subscribe(updateNavigation);
-  return `<nav class="d-flex justify-center flex-wrap">
-      ${render(categories, currentTab)}
-  </nav>`;
-};
 
-const render = (categories: Tcategory[], currentTab: Tcategory) => {
   return categories
     .map(
       category =>
@@ -24,12 +16,6 @@ const render = (categories: Tcategory[], currentTab: Tcategory) => {
     </button>`,
     )
     .join('');
-};
-
-const updateNavigation = () => {
-  const { categories, currentTab } = store.getState();
-
-  $('nav').innerHTML = render(categories, currentTab);
 };
 
 export default Navigation;
