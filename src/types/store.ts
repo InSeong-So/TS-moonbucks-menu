@@ -6,10 +6,6 @@ export type Tstate = {
   categories: Tcategory[];
 };
 
-export type Tprops = {
-  state: Tstate;
-};
-
 export type TmenuAction = {
   type: string;
   payload: {
