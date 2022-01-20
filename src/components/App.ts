@@ -20,13 +20,14 @@ export default class App extends Component {
     `;
   }
   mount() {
+    const service = createCurrentMenuService(
+      createCurrentMenuRepository(this.store),
+    );
     new Header({
       key: 'header',
       $parent: this.$component,
       props: {
-        currentMenuService: createCurrentMenuService(
-          createCurrentMenuRepository(this.store, {}),
-        ),
+        currentMenuService: service,
       },
     });
 

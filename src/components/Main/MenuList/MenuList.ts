@@ -2,14 +2,10 @@ import Component from '../../../core/Component';
 import { CurrentMenuService } from '../../../modules/notUsingMiddlewares/services';
 import { MenuItem } from './MenuItem';
 import { EVENTS, MESSAGES, SELECTORS } from '../../../constants';
-import { CurrentMenuRepository } from '../../../modules/notUsingMiddlewares/Repository';
 
 export default class MenuList extends Component {
   get service() {
     return this?.props?.currentMenuService as CurrentMenuService;
-  }
-  get repository() {
-    return this?.props?.currentMenuRepo as CurrentMenuRepository;
   }
   get menuList() {
     return this.service.getList();
@@ -27,6 +23,13 @@ export default class MenuList extends Component {
   }
 
   mount() {
+    //fetch를 어느시점에 해야하는지 모르겠다...
+    // 비상 -> fetch 로직이 컴포넌트 안에 있으니 코어로직에서 각각의 render함수를 구독하고 있기 때문에
+    // 컴포넌트가 생성될때마다 fetch가 실행됨...
+    // init <-> rerender 두 로직을 분리해야하는 필요성 느낌
+    console.log(this.service.currentTab().key);
+    this.service.fetchByCategory(this.service.currentTab().key);
+
     this.menuList.forEach(
       item => new MenuItem({ key: `item-${item.id}`, props: { item } }),
     );

@@ -1,72 +1,110 @@
-import { Actions, CoffeeKeys, DefaultState, MenuItem } from '../type';
+import {
+  Actions,
+  CoffeeKeys,
+  DefaultState,
+  MenuItem,
+  MenuItemFormServer,
+} from '../type';
 import { ReturnCreateStore } from '../../core/myRedux';
 import {
   addMenu,
   changeTab,
   editMenu,
+  fetchMenus,
   removeMenu,
   soldOutMenu,
 } from '../actions';
 import { Coffee } from '../constants';
+import { menuClient } from '../../networks/domain/menuClient';
+
+const adjustMenuItem = (menuItem: MenuItemFormServer): MenuItem => ({
+  ...menuItem,
+  text: menuItem.name,
+});
 
 export interface CurrentMenuRepository {
-  add: (newMenu: MenuItem) => void;
-  edit: (newMenu: MenuItem) => void;
+  add: (text: string, category: string) => void;
+  edit: ({
+    menuId,
+    text,
+    category,
+  }: {
+    menuId: string;
+    text: string;
+    category: string;
+  }) => void;
+  toggleSoldOut: (menuId: string, category: string) => void;
+  remove: (menuId: string, category: string) => void;
+  fetchByCategory: (cate: CoffeeKeys) => void;
+  // cache data
   getList: () => Array<MenuItem>;
   findById: (id: string | undefined) => MenuItem | undefined;
   findByText: (text: string) => MenuItem | undefined;
   changeTab: (selectedTab: CoffeeKeys) => void;
-  toggleSoldOut: (menuId: string) => void;
-  remove: (menuId: string) => void;
-  currentKoreanTab: () => string;
+  currentTab: () => { koreanName: string; key: CoffeeKeys };
 }
 
 export const createCurrentMenuRepository = (() => {
+  let repository: CurrentMenuRepository;
   return (
     store: ReturnCreateStore<DefaultState, Actions>,
-    db: any,
+    client: typeof menuClient = menuClient,
   ): CurrentMenuRepository => {
     const { dispatch, getState } = store;
-    return {
-      currentKoreanTab: () => {
+    if (repository) {
+      return repository;
+    }
+    repository = {
+      currentTab: () => {
         const currentState = getState();
-        return Coffee[currentState.currentTab].koreanName;
+        return Coffee[currentState.currentTab];
       },
       getList: () => {
         const currentState = getState();
-        const res = currentState.menus[currentState.currentTab];
-        return res;
+        return currentState.menus[currentState.currentTab];
       },
-      findById: (id: string | undefined) => {
-        return createCurrentMenuRepository(store, db)
+      findById: id => {
+        return createCurrentMenuRepository(store, client)
           .getList()
           .find(coffee => coffee.id === id);
       },
-      findByText: (text: string) => {
-        return createCurrentMenuRepository(store, db)
+      findByText: text => {
+        return createCurrentMenuRepository(store, client)
           .getList()
           .find(coffee => coffee.text === text);
       },
-      remove: (menuId: string) => {
+      remove: async (menuId, category) => {
         // db action, state action
+        await client.remove({ menuId, category });
+
         dispatch(removeMenu(menuId));
       },
-      changeTab: (selectedTab: CoffeeKeys) => {
+      changeTab: selectedTab => {
         dispatch(changeTab(selectedTab));
       },
-      toggleSoldOut: (menuId: string) => {
+      toggleSoldOut: async (menuId, category) => {
+        // http.client
+        await client.toggleSoldOut({ menuId, category }); // 서버를 믿는다...?
         dispatch(soldOutMenu(menuId));
       },
-      edit: (newMenu: MenuItem) => {
+      edit: async ({ menuId, text, category }) => {
+        // http.client put
+        const newMenu = await client.editText({ menuId, text, category });
         dispatch(
           editMenu({
-            ...newMenu,
+            ...adjustMenuItem(newMenu),
           }),
         );
       },
-      add: (newMenu: MenuItem) => {
-        dispatch(addMenu(newMenu));
+      fetchByCategory: async cate => {
+        const menuList = await client.fetchByCategory(cate);
+        dispatch(fetchMenus(cate, menuList.map(adjustMenuItem)));
+      },
+      add: async (text, category) => {
+        const menuItem = await client.add(text, category);
+        dispatch(addMenu(adjustMenuItem(menuItem)));
       },
     };
+    return repository;
   };
 })();

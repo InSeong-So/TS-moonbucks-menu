@@ -22,7 +22,7 @@ export default class Main extends Component {
     `;
   }
   mount() {
-    const currentMenuRepo = createCurrentMenuRepository(this.store, {});
+    const currentMenuRepo = createCurrentMenuRepository(this.store);
     const currentMenuService = createCurrentMenuService(currentMenuRepo);
     new MenuTitle({
       key: 'menu-title',

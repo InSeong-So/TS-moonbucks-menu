@@ -7,6 +7,7 @@ import {
   MenuRemoveAction,
   MenuSoldOutAction,
   TabChangeAction,
+  FetchMenusByCategoryAction,
 } from './type';
 
 export const addMenu = (menu: MenuItem): MenuAddAction => {
@@ -14,6 +15,18 @@ export const addMenu = (menu: MenuItem): MenuAddAction => {
     type: 'ADD',
     payload: {
       menu,
+    },
+  };
+};
+export const fetchMenus = (
+  cate: CoffeeKeys,
+  menus: MenuItem[],
+): FetchMenusByCategoryAction => {
+  return {
+    type: 'FETCH_MENUS_BY_CATEGORY',
+    payload: {
+      category: cate,
+      menus,
     },
   };
 };

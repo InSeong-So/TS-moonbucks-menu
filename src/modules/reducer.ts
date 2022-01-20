@@ -6,6 +6,21 @@ export default function reducer(
   action: Actions,
 ): DefaultState {
   switch (action.type) {
+    case 'FETCH_MENUS_BY_CATEGORY': {
+      if (state.currentTab !== action.payload.category) {
+        throw new Error(
+          `현재 카테고리와 ${action.payload.category}가 다르면 안됩니다.`,
+        );
+      }
+
+      return {
+        ...state,
+        menus: {
+          ...state.menus,
+          [action.payload.category]: action.payload.menus,
+        },
+      };
+    }
     case 'CHANGE_TAB': {
       return {
         ...state,
