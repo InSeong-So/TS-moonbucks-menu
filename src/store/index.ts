@@ -1,6 +1,6 @@
 import { createStore } from './helper.js';
-import { reducer } from './menu.js';
+import menuReducer from './menu.js';
 
-const menuStore = createStore(reducer);
+const store = createStore(menuReducer);
 
-export { menuStore };
+export default store;

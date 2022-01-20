@@ -1,14 +1,17 @@
-import { $ } from '../utils/domController.js';
-import { menuStore } from '../store/index.js';
+import { Tstate } from '../types/store.js';
+import { getCategoryMenus } from '../utils/helper.js';
 
-const render = () => {
-  const { menus } = menuStore.getState();
+const MenuItem = (state: Tstate) => {
+  const { menus, currentTab } = state;
+  const categoryMenus = getCategoryMenus(menus, currentTab);
 
-  $('#espresso-menu-list').innerHTML = menus
+  return categoryMenus
     .map(
-      (menu, index) =>
-        `<li id="espresso-menu-id-${index}" class="menu-list-item d-flex items-center py-2">
-  <span id="espresso-menu-name" class="w-100 pl-2 menu-name">${menu}</span>
+      menu =>
+        `<li id="${menu.id}" class="menu-list-item d-flex items-center py-2">
+  <span id="espresso-menu-name" class="w-100 pl-2 menu-name ${
+    menu.inStock || 'sold-out'
+  }">${menu.menuName}</span>
   <button
     type="button"
     id="espresso-edit-button"
@@ -23,9 +26,17 @@ const render = () => {
   >
     삭제
   </button>
+  <button
+    id="espresso-soldout-button"
+    type="button"
+    class="bg-gray-50 text-gray-500 text-sm menu-soldout-button"
+    ${menu.inStock || 'disabled'}
+  >
+    품절
+  </button>
 </li>`,
     )
-    .join('\n');
+    .join('');
 };
 
-export default render;
+export default MenuItem;

@@ -1,53 +1,98 @@
-import { actionType, stateType } from './type.js';
-
-/* 리덕스에서 관리 할 상태 정의 */
-const initialState: stateType = {
-  menus: [],
-};
+import { Tcategory, TmenuAction } from '../types/store.js';
+import { Tstate } from '../types/store.js';
 
 /* 액션 타입 정의 */
 const CREATE_MENU = 'CREATE_MENU' as const;
 const EDIT_MENU = 'EDIT_MENU' as const;
 const REMOVE_MENU = 'REMOVE_MENU' as const;
+const SOLD_OUT_MENU = 'SOLD_OUT_MENU' as const;
+const SET_CURRENT_TAB = 'SET_CURRENT_TAB' as const;
 
 /* 액션 생성 함수 */
-export const createMenuItem = (menuName: string) => ({
+export const createMenuItem = (categoryId: string, menuName: string) => ({
   type: CREATE_MENU,
-  text: menuName,
+  payload: {
+    categoryId,
+    menuName,
+  },
 });
 
-export const editMenuItem = (menuIdx: number, menuName: string) => ({
+export const editMenuItem = (menuId: string, menuName: string) => ({
   type: EDIT_MENU,
-  menuIdx,
-  text: menuName,
+  payload: {
+    menuId,
+    menuName,
+  },
 });
 
-export const removeMenuItem = (menuIdx: number) => ({
+export const removeMenuItem = (menuId: string) => ({
   type: REMOVE_MENU,
-  menuIdx,
+  payload: {
+    menuId,
+  },
+});
+
+export const soldOutMenuItem = (menuId: string) => ({
+  type: SOLD_OUT_MENU,
+  payload: {
+    menuId,
+  },
+});
+
+export const setCurrentTab = (categoryId: string) => ({
+  type: SET_CURRENT_TAB,
+  payload: {
+    categoryId,
+  },
 });
 
 // 리듀서는 새로운 상태를 생성하는 함수.
-export const reducer = (state = initialState, action: actionType) => {
-  const { type, menuIdx = 0, text = '' } = action;
-  const { menus } = state;
+export default function reducer(state: Tstate, action: TmenuAction) {
+  const { type, payload } = action;
+  const { categoryId = '', menuId = '', menuName = '' } = payload;
+  const { menus, categories } = state;
 
-  // TODO: 배열 복사 방법 통일
   switch (type) {
     case CREATE_MENU: {
-      const newState = menus.concat([text]);
-      return { menus: newState };
+      const categoryMenus = menus.filter(menu => {
+        return menu.categoryId === categoryId;
+      });
+      // TODO: 중복 가능성 의심, UUID 적용
+      const id = `${categoryId}-menu-id-${categoryMenus.length}`;
+      const newMenu = { id, categoryId, menuName, inStock: true };
+      const newMenuList = [...menus, newMenu];
+      return { ...state, menus: newMenuList };
     }
     case EDIT_MENU: {
-      const newState = [...menus];
-      newState[menuIdx] = text;
-      return { menus: newState };
+      const newMenuList = menus.map(menu => {
+        if (menu.id === menuId) {
+          menu.menuName = menuName;
+        }
+        return menu;
+      });
+      return { ...state, menus: newMenuList };
     }
     case REMOVE_MENU: {
-      const newState = menus.filter(menu => menu !== menus[menuIdx]);
-      return { menus: newState };
+      const newMenuList = menus.filter(menu => menu.id !== menuId);
+      return { ...state, menus: newMenuList };
+    }
+    case SOLD_OUT_MENU: {
+      const newMenuList = menus.map(menu => {
+        if (menu.id === menuId) {
+          menu.inStock = false;
+        }
+        return menu;
+      });
+      return { ...state, menus: newMenuList };
+    }
+    case SET_CURRENT_TAB: {
+      // TODO: 에러처리 및  undefiend 체크하는 공통함수 구현
+      const category = categories.find(category => {
+        return category.id === categoryId;
+      }) as Tcategory;
+      return { ...state, currentTab: category };
     }
     default:
       return state;
   }
-};
+}
